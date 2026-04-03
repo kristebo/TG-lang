@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { runTG } from '../src/runtime'
+import { runTG, stopTG } from '../src/runtime'
 import { EXAMPLES } from '../src/samples'
 
 export default function Home() {
@@ -9,6 +9,7 @@ export default function Home() {
   const [source, setSource] = useState<string>(EXAMPLES[0]?.code ?? '')
   const [output, setOutput] = useState<string>('(ingen output)')
   const [javascript, setJavascript] = useState<string>('')
+  const [running, setRunning] = useState<boolean>(false)
 
   const selected = useMemo(
     () => EXAMPLES.find((item) => item.id === exampleId) ?? EXAMPLES[0],
@@ -23,6 +24,7 @@ export default function Home() {
   }
 
   async function runCode(): Promise<void> {
+    setRunning(true)
     setOutput('Kjorer...')
     setJavascript('')
     const result = await runTG(source, {
@@ -30,6 +32,7 @@ export default function Home() {
         setOutput(allLines.join('\n'))
       },
     })
+    setRunning(false)
     setJavascript(result.javascript)
 
     if (result.error) {
@@ -38,6 +41,17 @@ export default function Home() {
     }
 
     setOutput(result.output.length > 0 ? result.output.join('\n') : '(ingen output)')
+  }
+
+  function stopCode(): void {
+    const stopped = stopTG()
+    if (!stopped.success && stopped.error) {
+      setOutput(`Feil: ${stopped.error}`)
+      return
+    }
+
+    setOutput((current) => `${current}\n[stoppet]`)
+    setRunning(false)
   }
 
   return (
@@ -64,6 +78,9 @@ export default function Home() {
           </button>
           <button type="button" className="run" onClick={runCode}>
             Run TG-lang
+          </button>
+          <button type="button" onClick={stopCode} disabled={!running}>
+            Stopp
           </button>
         </section>
 

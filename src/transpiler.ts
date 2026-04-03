@@ -21,15 +21,16 @@ export function transpile(program: Program): string {
 
 function transpileStatement(statement: Statement, context: TranspileContext): string[] {
   const pad = renderIndent(context.indentLevel)
+  const guard = `${pad}__tg.ensureActive();`
 
   switch (statement.type) {
     case 'AssignmentStatement': {
       const declaration = context.declaredVariables.has(statement.name) ? '' : 'let '
       context.declaredVariables.add(statement.name)
-      return [`${pad}${declaration}${statement.name} = ${transpileExpression(statement.value)};`]
+      return [guard, `${pad}${declaration}${statement.name} = ${transpileExpression(statement.value)};`]
     }
     case 'InfodeskStatement':
-      return [`${pad}console.log(${transpileExpression(statement.expression)});`]
+      return [guard, `${pad}console.log(${transpileExpression(statement.expression)});`]
     case 'ConditionalStatement': {
       const nestedContext: TranspileContext = {
         declaredVariables: context.declaredVariables,
@@ -41,7 +42,7 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
           ? statement.thenBody.flatMap((inner) => transpileStatement(inner, nestedContext))
           : [`${renderIndent(context.indentLevel + 1)}/* empty */`]
 
-      const lines = [`${pad}if (${transpileExpression(statement.condition)}) {`, ...thenLines, `${pad}}`]
+      const lines = [guard, `${pad}if (${transpileExpression(statement.condition)}) {`, ...thenLines, `${pad}}`]
 
       if (statement.elseBody) {
         const elseLines =
@@ -71,20 +72,19 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
           : [`${renderIndent(context.indentLevel + 1)}/* empty */`]
 
       const end = statement.name ? `${pad}};` : `${pad}}`
-      return [start, ...bodyLines, end]
+      return [guard, start, ...bodyLines, end]
     }
     case 'ReturnStatement':
-      return [`${pad}return ${transpileExpression(statement.expression)};`]
+      return [guard, `${pad}return ${transpileExpression(statement.expression)};`]
     case 'SleepStatement':
       return [
-        `${pad}await new Promise((resolve) => setTimeout(resolve, (${transpileExpression(
-          statement.duration,
-        )}) * 1000));`,
+        guard,
+        `${pad}await __tg.sleep((${transpileExpression(statement.duration)}) * 1000);`,
       ]
     case 'ThrowStatement':
-      return [`${pad}throw new Error(String(${transpileExpression(statement.expression)}));`]
+      return [guard, `${pad}throw new Error(String(${transpileExpression(statement.expression)}));`]
     case 'ExpressionStatement':
-      return [`${pad}await ${transpileExpression(statement.expression)};`]
+      return [guard, `${pad}await ${transpileExpression(statement.expression)};`]
   }
 }
 

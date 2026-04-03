@@ -127,6 +127,8 @@ pre {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.9rem;
   line-height: 1.5;
+  overflow-y: auto;
+  max-height: 45vh;
 }
 
 textarea {
@@ -141,6 +143,7 @@ pre {
   color: var(--output);
   min-height: 110px;
   overflow: auto;
+  max-height: 45vh;
   margin-bottom: 0.75rem;
 }
 

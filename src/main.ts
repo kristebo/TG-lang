@@ -1,6 +1,6 @@
 import './style.css'
 import { EXAMPLES } from './samples'
-import { runTG } from './runtime'
+import { runTG, stopTG } from './runtime'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 <main class="shell">
@@ -16,6 +16,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <select id="examplePicker"></select>
     <button id="loadExample" type="button">Last inn</button>
     <button id="runButton" type="button" class="run">Run TG-lang</button>
+    <button id="stop" type="button" class="stop">Stopp</button>
   </section>
 
   <section class="grid">
@@ -28,6 +29,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <h2>Output</h2>
       <pre id="output"></pre>
     </article>
+
   </section>
 </main>
 `
@@ -37,7 +39,9 @@ const editor = document.querySelector<HTMLTextAreaElement>('#editor')!
 const output = document.querySelector<HTMLPreElement>('#output')!
 const loadButton = document.querySelector<HTMLButtonElement>('#loadExample')!
 const runButton = document.querySelector<HTMLButtonElement>('#runButton')!
+const stopButton = document.querySelector<HTMLButtonElement>('#stop')!
 
+stopButton.disabled = true
 for (const example of EXAMPLES) {
   const option = document.createElement('option')
   option.value = example.id
@@ -54,10 +58,23 @@ loadSelectedExample()
 
 loadButton.addEventListener('click', loadSelectedExample)
 
+stopButton.addEventListener('click', () => {
+  const res = stopTG()
+  if (!res.success) {
+    output.textContent = `Feil ved stopping: ${res.error}`
+    return
+  }
+
+  output.textContent = 'Kjoring stoppet.'
+  stopButton.disabled = true
+})
+
 runButton.addEventListener('click', async () => {
+  stopButton.disabled = false
   output.textContent = 'Kjorer...'
 
   const result = await runTG(editor.value)
+  stopButton.disabled = true
 
   if (result.error) {
     output.textContent = `Feil: ${result.error}`
