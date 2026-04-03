@@ -140,5 +140,100 @@ hylle arnebanan(a) => {
 }
 arnebanan(arne)
 søndag`
+  },
+  {
+    id: `mandelbrot`,
+    title: 'Mandelbrot',
+    code: `innsjekk
+
+l = arne deltager arne
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = arne arne arne arne
+fem = arne arne arne arne arne
+
+seks = tre kandu to
+atte = fire kandu to
+ti = fem kandu to
+tolv = ti crew to
+seksten = atte kandu to
+tjue = ti kandu to
+tretti = ti kandu tre
+forti = tjue kandu to
+seksti = tretti kandu to
+atti = forti kandu to
+
+skala = ti
+bredde = atti
+hoyde = forti
+maksiter = seksten
+
+xmin = l deltager tjue
+ymin = l deltager ti
+
+xsteg = en
+ysteg = en
+
+
+xtegn = rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne 
+
+underscore = rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+hylle mul(a b) => {
+  tech a kandu b medic skala
+}
+
+hylle mandel(cx cy zx zy left) => {
+
+  xx = mul(zx, zx)
+  yy = mul(zy, zy)
+  mag = xx crew yy
+
+  secbua (mag maof (fire kandu skala)) {
+    tech l
+  } ombud {
+
+    secbua (left) {
+
+      nyzx = xx deltager yy crew cx
+      nyzy = mul(to kandu zx, zy) crew cy
+
+      tech mandel(cx, cy, nyzx, nyzy, left deltager en)
+
+    } ombud {
+      tech en
+    }
+  }
+}
+
+hylle p(cx cy) => {
+  m = mandel(cx, cy, l, l, maksiter)
+  secbua (m) {
+    tech xtegn
+  } ombud {
+    tech underscore
+  }
+}
+
+hylle rad(count cx cy) => {
+  secbua (count kanalseks en) {
+    tech p(cx, cy)
+  } ombud {
+    tech p(cx, cy) crew rad(count deltager en, cx crew xsteg, cy)
+  }
+}
+
+hylle render(rowsleft cy) => {
+  secbua (rowsleft) {
+    infodesk(rad(bredde, xmin, cy))
+    render(rowsleft deltager en, cy crew ysteg)
+  } ombud {
+  }
+}
+
+render(hoyde, ymin)
+
+søndag`
   }
 ]
