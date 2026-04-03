@@ -30,8 +30,32 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
     }
     case 'InfodeskStatement':
       return [`${pad}console.log(${transpileExpression(statement.expression)});`]
+    case 'ConditionalStatement': {
+      const nestedContext: TranspileContext = {
+        declaredVariables: context.declaredVariables,
+        indentLevel: context.indentLevel + 1,
+      }
+
+      const thenLines =
+        statement.thenBody.length > 0
+          ? statement.thenBody.flatMap((inner) => transpileStatement(inner, nestedContext))
+          : [`${renderIndent(context.indentLevel + 1)}/* empty */`]
+
+      const lines = [`${pad}if (${transpileExpression(statement.condition)}) {`, ...thenLines, `${pad}}`]
+
+      if (statement.elseBody) {
+        const elseLines =
+          statement.elseBody.length > 0
+            ? statement.elseBody.flatMap((inner) => transpileStatement(inner, nestedContext))
+            : [`${renderIndent(context.indentLevel + 1)}/* empty */`]
+        lines[lines.length - 1] = `${pad}} else {`
+        lines.push(...elseLines, `${pad}}`)
+      }
+
+      return lines
+    }
     case 'FunctionDeclaration': {
-      const signature = `(${statement.params.join(', ')}) => {`
+      const signature = `async (${statement.params.join(', ')}) => {`
       const start = statement.name
         ? `${pad}const ${statement.name} = ${signature}`
         : `${pad}${signature}`
@@ -60,7 +84,7 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
     case 'ThrowStatement':
       return [`${pad}throw new Error(String(${transpileExpression(statement.expression)}));`]
     case 'ExpressionStatement':
-      return [`${pad}${transpileExpression(statement.expression)};`]
+      return [`${pad}await ${transpileExpression(statement.expression)};`]
   }
 }
 

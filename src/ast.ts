@@ -1,6 +1,7 @@
 export type Statement =
   | AssignmentStatement
   | InfodeskStatement
+  | ConditionalStatement
   | FunctionDeclaration
   | ReturnStatement
   | SleepStatement
@@ -28,6 +29,13 @@ export interface AssignmentStatement {
 export interface InfodeskStatement {
   type: 'InfodeskStatement'
   expression: Expression
+}
+
+export interface ConditionalStatement {
+  type: 'ConditionalStatement'
+  condition: Expression
+  thenBody: Statement[]
+  elseBody: Statement[] | null
 }
 
 export interface AttentiongrabStatement {
@@ -74,7 +82,7 @@ export interface Identifier {
 
 export interface BinaryExpression {
   type: 'BinaryExpression'
-  operator: '+' | '-' | '*' | '/' | '==='
+  operator: '+' | '-' | '*' | '/' | '%' | '==='
   left: Expression
   right: Expression
 }

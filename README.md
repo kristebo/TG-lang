@@ -25,7 +25,8 @@ Web-based MVP of TG-lang with:
 - `rop arne...` -> uppercase ASCII (`String.fromCharCode(count + 64)`)
 - `infodesk expr` or `infodesk(expr)` -> `console.log(expr)`
 - Operators: `crew`, `deltager`, `kandu`, `medic`
-- Equality: `kanal6` -> `===`
+- Equality: `kanalseks` -> `===`
+- Conditional branching: `secbua (condition) { ... }` with optional `ombud { ... }`
 - Functions: `hylle name(a b) => { ... }`
 - Return: `tech expr`
 - Sleep: `sovetelt(expr) { }`

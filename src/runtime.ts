@@ -10,6 +10,10 @@ export interface RunResult {
   error?: string
 }
 
+export interface RunOptions {
+  onOutput?: (line: string, allLines: string[]) => void
+}
+
 const AsyncFunction = Object.getPrototypeOf(async function () {
   // noop
 }).constructor as new (...args: string[]) => (...args: unknown[]) => Promise<unknown>
@@ -38,7 +42,7 @@ function stringifyValue(value: unknown): string {
   return String(value)
 }
 
-export async function runTG(source: string): Promise<RunResult> {
+export async function runTG(source: string, options?: RunOptions): Promise<RunResult> {
   const output: string[] = []
   let javascript = ''
 
@@ -49,7 +53,9 @@ export async function runTG(source: string): Promise<RunResult> {
 
     const sandboxConsole = {
       log: (...args: unknown[]) => {
-        output.push(args.map((arg) => stringifyValue(arg)).join(' '))
+        const line = args.map((arg) => stringifyValue(arg)).join(' ')
+        output.push(line)
+        options?.onOutput?.(line, [...output])
       },
     }
 

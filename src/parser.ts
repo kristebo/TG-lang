@@ -2,6 +2,7 @@ import type {
   AssignmentStatement,
   BinaryExpression,
   CallExpression,
+  ConditionalStatement,
   Expression,
   ExpressionStatement,
   FunctionDeclaration,
@@ -32,8 +33,11 @@ const RESERVED = new Set([
   'crew',
   'deltager',
   'kandu',
+  'kandustyre',
   'medic',
-  'kanal6',
+  'kanalseks',
+  'secbua',
+  'ombud',
   'hylle',
   'tech',
   'sovetelt',
@@ -69,6 +73,10 @@ class Parser {
   private parseStatement(): Statement {
     if (this.isWord('infodesk')) {
       return this.parseInfodesk()
+    }
+
+    if (this.isWord('secbua')) {
+      return this.parseConditional()
     }
 
     if (this.isWord('hylle')) {
@@ -153,25 +161,34 @@ class Parser {
     this.expectType('RPAREN')
 
     this.expectType('ARROW')
-    this.expectType('LBRACE')
-    this.consumeNewlines()
-
-    const body: Statement[] = []
-    while (!this.isType('RBRACE')) {
-      if (this.isType('EOF')) {
-        throw new ParseError('Funksjonsblokk ble ikke avsluttet med }.')
-      }
-
-      body.push(this.parseStatement())
-      this.consumeNewlines()
-    }
-    this.expectType('RBRACE')
-
+    const body = this.parseBlock('Funksjonsblokk ble ikke avsluttet med }.')
+    console.log('Parsed function declaration:', { name, params, body })
     return {
       type: 'FunctionDeclaration',
       name,
       params,
       body,
+    }
+  }
+
+  private parseConditional(): ConditionalStatement {
+    this.expectWord('secbua')
+    this.expectType('LPAREN')
+    const condition = this.parseExpression()
+    this.expectType('RPAREN')
+
+    const thenBody = this.parseBlock('secbua-blokk ble ikke avsluttet med }.')
+
+    let elseBody: Statement[] | null = null
+    if (this.matchWord('ombud')) {
+      elseBody = this.parseBlock('ombud-blokk ble ikke avsluttet med }.')
+    }
+
+    return {
+      type: 'ConditionalStatement',
+      condition,
+      thenBody,
+      elseBody,
     }
   }
 
@@ -218,7 +235,7 @@ class Parser {
   private parseEquality(): Expression {
     let left = this.parseAdditive()
 
-    while (this.matchWord('kanal6')) {
+    while (this.matchWord('kanalseks')) {
       const right = this.parseAdditive()
       const node: BinaryExpression = {
         type: 'BinaryExpression',
@@ -252,8 +269,9 @@ class Parser {
   private parseMultiplicative(): Expression {
     let left = this.parsePrimary()
 
-    while (this.isWord('kandu') || this.isWord('medic')) {
-      const operator = this.expectType('WORD').value === 'kandu' ? '*' : '/'
+    while (this.isWord('kandu') || this.isWord('medic') || this.isWord('kandustyre')) {
+      const word = this.expectType('WORD').value
+      const operator = word === 'kandu' ? '*' : word === 'medic' ? '/' : '%'
       const right = this.parsePrimary()
       left = {
         type: 'BinaryExpression',
@@ -337,6 +355,24 @@ class Parser {
       type: 'RopExpression',
       expression: this.parseAdditive(),
     }
+  }
+
+  private parseBlock(eofErrorMessage: string): Statement[] {
+    this.expectType('LBRACE')
+    this.consumeNewlines()
+
+    const body: Statement[] = []
+    while (!this.isType('RBRACE')) {
+      if (this.isType('EOF')) {
+        throw new ParseError(eofErrorMessage)
+      }
+
+      body.push(this.parseStatement())
+      this.consumeNewlines()
+    }
+    this.expectType('RBRACE')
+
+    return body
   }
 
   private consumeNewlines(): void {

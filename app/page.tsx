@@ -8,6 +8,7 @@ export default function Home() {
   const [exampleId, setExampleId] = useState<string>(EXAMPLES[0]?.id ?? '')
   const [source, setSource] = useState<string>(EXAMPLES[0]?.code ?? '')
   const [output, setOutput] = useState<string>('(ingen output)')
+  const [javascript, setJavascript] = useState<string>('')
 
   const selected = useMemo(
     () => EXAMPLES.find((item) => item.id === exampleId) ?? EXAMPLES[0],
@@ -23,7 +24,13 @@ export default function Home() {
 
   async function runCode(): Promise<void> {
     setOutput('Kjorer...')
-    const result = await runTG(source)
+    setJavascript('')
+    const result = await runTG(source, {
+      onOutput: (_line, allLines) => {
+        setOutput(allLines.join('\n'))
+      },
+    })
+    setJavascript(result.javascript)
 
     if (result.error) {
       setOutput(`Feil: ${result.error}`)
@@ -69,6 +76,9 @@ export default function Home() {
           <article className="panel">
             <h2>Output</h2>
             <pre id="output">{output}</pre>
+
+            <h2>Generert JavaScript</h2>
+            <pre id="generated">{javascript || '(ingen JavaScript generert)'}</pre>
           </article>
         </section>
       </section>
