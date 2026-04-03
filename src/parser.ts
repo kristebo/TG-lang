@@ -27,7 +27,7 @@ export class ParseError extends Error {
 
 const RESERVED = new Set([
   'vikingskip',
-  'opplosning',
+  'hovedscene',
   'piksel',
   'innsjekk',
   'søndag',
@@ -72,7 +72,7 @@ class Parser {
     this.expectWord('innsjekk')
     this.consumeNewlines()
 
-    if (mode === 'canvas' && this.matchWord('opplosning')) {
+    if (mode === 'canvas' && this.matchWord('hovedscene')) {
       resolution = this.parseArneOnlyValue()
       this.consumeNewlines()
     }
@@ -403,13 +403,13 @@ class Parser {
 
   private parseArneOnlyValue(): number {
     if (!this.isWord('arne')) {
-      throw this.error(this.peek(), 'opplosning ma vaere en arne-sekvens.')
+      throw this.error(this.peek(), 'hovedscene ma vaere en arne-sekvens.')
     }
 
     const value = this.parseArneSequence().value
 
     if (this.isType('WORD')) {
-      throw this.error(this.peek(), 'opplosning kan kun inneholde arne.')
+      throw this.error(this.peek(), 'hovedscene kan kun inneholde arne.')
     }
 
     return value

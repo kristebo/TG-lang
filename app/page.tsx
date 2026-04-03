@@ -156,6 +156,70 @@ export default function Home() {
             <pre id="generated">{javascript || '(ingen JavaScript generert)'}</pre>
           </article>
         </section>
+
+        <section className="panel spec">
+          <h2>TG-lang sprakdefinisjon</h2>
+
+          <h3>Programstruktur</h3>
+          <ul>
+            <li>Et program starter med <strong>innsjekk</strong> og avsluttes med <strong>søndag</strong>.</li>
+            <li>Valgfri grafikkmodus startes med <strong>vikingskip</strong> på egen linje før <strong>innsjekk</strong>.</li>
+            <li>I grafikkmodus settes oppløsning med <strong>hovedscene arne ...</strong>. Hvis ikke oppgitt brukes standard oppløsning 16.</li>
+          </ul>
+
+          <h3>Verdier og uttrykk</h3>
+          <ul>
+            <li><strong>arne</strong> representerer 1. Flere arne i sekvens gir tilsvarende heltall.</li>
+            <li><strong>rop</strong> er et uttrykk som konverterer arne-baserte verdier til bokstaver.</li>
+            <li><strong>rop</strong> støtter uttrykk og konkatenering med <strong>crew</strong>.</li>
+            <li>Talltegn er ikke tillatt i kildekoden. Numeriske verdier må uttrykkes med arne-sekvenser.</li>
+          </ul>
+
+          <h3>Output</h3>
+          <ul>
+            <li><strong>infodesk expr</strong> eller <strong>infodesk(expr)</strong> skriver til output.</li>
+            <li>I tekstmodus vises output i tekstpanel.</li>
+            <li>I vikingskip-modus vises grafisk output i canvas.</li>
+          </ul>
+
+          <h3>Operatorer</h3>
+          <ul>
+            <li><strong>crew</strong> = +</li>
+            <li><strong>deltager</strong> = -</li>
+            <li><strong>kandu</strong> = *</li>
+            <li><strong>medic</strong> = /</li>
+            <li><strong>kandustyre</strong> = %</li>
+            <li><strong>foam</strong> = &lt;</li>
+            <li><strong>maof</strong> = &gt;</li>
+            <li><strong>kanalseks</strong> = ===</li>
+          </ul>
+
+          <h3>Kontrollflyt</h3>
+          <ul>
+            <li><strong>secbua (betingelse) &#123; ... &#125;</strong> for if-blokk.</li>
+            <li><strong>ombud &#123; ... &#125;</strong> som valgfri else-blokk.</li>
+          </ul>
+
+          <h3>Funksjoner</h3>
+          <ul>
+            <li><strong>hylle navn(a b) =&gt; &#123; ... &#125;</strong> definerer funksjon.</li>
+            <li><strong>tech expr</strong> returnerer verdi.</li>
+            <li>Funksjonskall awaites automatisk i generert kode, bade pa toppniva og nested.</li>
+          </ul>
+
+          <h3>Runtime-kommandoer</h3>
+          <ul>
+            <li><strong>sovetelt(expr) &#123; &#125;</strong> pauser kjoring i expr sekunder.</li>
+            <li><strong>attentiongrab(expr)</strong> kaster en feil.</li>
+            <li><strong>piksel(x, y)</strong> setter en piksel i canvas i vikingskip-modus.</li>
+          </ul>
+
+          <h3>Avbrytelse</h3>
+          <ul>
+            <li>Stopp-knappen avbryter bare den aktive TG-kjoringen.</li>
+            <li>Avbrytelse virker ogsa under venting i <strong>sovetelt</strong> og i rekursive kjoringer.</li>
+          </ul>
+        </section>
       </section>
     </main>
   )

@@ -10,7 +10,7 @@ export const EXAMPLES: Example[] = [
     title: 'Vikingskip canvas',
     code: `vikingskip
 innsjekk
-opplosning arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
 
 piksel(arne, arne)
 piksel(arne arne, arne arne)
