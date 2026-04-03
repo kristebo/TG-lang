@@ -1,0 +1,68 @@
+import './style.css'
+import { EXAMPLES } from './samples'
+import { runTG } from './runtime'
+
+document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+<main class="shell">
+  <header class="hero">
+    <p class="kicker">TG-lang MVP</p>
+    <h1>TG-lang Lab</h1>
+    <p class="subtitle">Skriv TG-lang, transpiler, og kjor direkte i nettleseren.</p>
+    <p class="subtitle">Useless util TG26 av 1tb</p>
+  </header>
+
+  <section class="toolbar">
+    <label for="examplePicker">Eksempel:</label>
+    <select id="examplePicker"></select>
+    <button id="loadExample" type="button">Last inn</button>
+    <button id="runButton" type="button" class="run">Run TG-lang</button>
+  </section>
+
+  <section class="grid">
+    <article class="panel">
+      <h2>Kode</h2>
+      <textarea id="editor" spellcheck="false"></textarea>
+    </article>
+
+    <article class="panel">
+      <h2>Output</h2>
+      <pre id="output"></pre>
+    </article>
+  </section>
+</main>
+`
+
+const picker = document.querySelector<HTMLSelectElement>('#examplePicker')!
+const editor = document.querySelector<HTMLTextAreaElement>('#editor')!
+const output = document.querySelector<HTMLPreElement>('#output')!
+const loadButton = document.querySelector<HTMLButtonElement>('#loadExample')!
+const runButton = document.querySelector<HTMLButtonElement>('#runButton')!
+
+for (const example of EXAMPLES) {
+  const option = document.createElement('option')
+  option.value = example.id
+  option.textContent = example.title
+  picker.appendChild(option)
+}
+
+function loadSelectedExample(): void {
+  const chosen = EXAMPLES.find((item) => item.id === picker.value) ?? EXAMPLES[0]
+  editor.value = chosen.code
+}
+
+loadSelectedExample()
+
+loadButton.addEventListener('click', loadSelectedExample)
+
+runButton.addEventListener('click', async () => {
+  output.textContent = 'Kjorer...'
+
+  const result = await runTG(editor.value)
+
+  if (result.error) {
+    output.textContent = `Feil: ${result.error}`
+    return
+  }
+
+  output.textContent = result.output.length > 0 ? result.output.join('\n') : '(ingen output)'
+})
