@@ -1,8 +1,10 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { runTG, stopTG } from '../src/runtime'
 import { EXAMPLES } from '../src/samples'
+
+const DEFAULT_CANVAS_RESOLUTION = 16
 
 export default function Home() {
   const [exampleId, setExampleId] = useState<string>(EXAMPLES[0]?.id ?? '')
@@ -10,6 +12,13 @@ export default function Home() {
   const [output, setOutput] = useState<string>('(ingen output)')
   const [javascript, setJavascript] = useState<string>('')
   const [running, setRunning] = useState<boolean>(false)
+  const [canvasResolution, setCanvasResolution] = useState<number | null>(null)
+  const [pixels, setPixels] = useState<Array<{ x: number; y: number }>>([])
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const isVikingskipMode = /^\s*vikingskip\b/m.test(source)
+  const visibleCanvasResolution = isVikingskipMode
+    ? (canvasResolution ?? DEFAULT_CANVAS_RESOLUTION)
+    : null
 
   const selected = useMemo(
     () => EXAMPLES.find((item) => item.id === exampleId) ?? EXAMPLES[0],
@@ -27,9 +36,17 @@ export default function Home() {
     setRunning(true)
     setOutput('Kjorer...')
     setJavascript('')
+    setCanvasResolution(isVikingskipMode ? DEFAULT_CANVAS_RESOLUTION : null)
+    setPixels([])
     const result = await runTG(source, {
       onOutput: (_line, allLines) => {
         setOutput(allLines.join('\n'))
+      },
+      onCanvasInit: (resolution) => {
+        setCanvasResolution(resolution)
+      },
+      onPixel: (x, y) => {
+        setPixels((current) => [...current, { x, y }])
       },
     })
     setRunning(false)
@@ -53,6 +70,34 @@ export default function Home() {
     setOutput((current) => `${current}\n[stoppet]`)
     setRunning(false)
   }
+
+  useEffect(() => {
+    if (!canvasRef.current || !visibleCanvasResolution) {
+      return
+    }
+
+    const canvas = canvasRef.current
+    const size = visibleCanvasResolution
+    const pixelSize = 12
+    canvas.width = size * pixelSize
+    canvas.height = size * pixelSize
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      return
+    }
+
+    ctx.fillStyle = '#0f1516'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    ctx.fillStyle = '#f6f0dc'
+    for (const pixel of pixels) {
+      if (pixel.x < 0 || pixel.y < 0 || pixel.x >= size || pixel.y >= size) {
+        continue
+      }
+      ctx.fillRect(pixel.x * pixelSize, pixel.y * pixelSize, pixelSize, pixelSize)
+    }
+  }, [visibleCanvasResolution, pixels])
 
   return (
     <main id="app">
@@ -91,8 +136,21 @@ export default function Home() {
           </article>
 
           <article className="panel">
-            <h2>Output</h2>
-            <pre id="output">{output}</pre>
+            {isVikingskipMode ? (
+              <>
+                <h2>Grafikk</h2>
+                <canvas
+                  ref={canvasRef}
+                  id="tg-canvas"
+                  style={{ width: '100%', maxWidth: '360px', border: '1px solid #d5c8a9', borderRadius: '10px' }}
+                />
+              </>
+            ) : (
+              <>
+                <h2>Output</h2>
+                <pre id="output">{output}</pre>
+              </>
+            )}
 
             <h2>Generert JavaScript</h2>
             <pre id="generated">{javascript || '(ingen JavaScript generert)'}</pre>

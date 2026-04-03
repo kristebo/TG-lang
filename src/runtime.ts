@@ -12,6 +12,8 @@ export interface RunResult {
 
 export interface RunOptions {
   onOutput?: (line: string, allLines: string[]) => void
+  onCanvasInit?: (resolution: number) => void
+  onPixel?: (x: number, y: number) => void
 }
 
 interface ActiveRun {
@@ -114,6 +116,15 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
     const tgRuntime = {
       ensureActive: () => ensureRunActive(run),
       sleep: (milliseconds: number) => sleepWithAbort(milliseconds, run),
+      initCanvas: async (resolution: number) => {
+        ensureRunActive(run)
+        const safeResolution = Math.max(1, Math.floor(Number.isFinite(resolution) ? resolution : 1))
+        options?.onCanvasInit?.(safeResolution)
+      },
+      putPixel: async (x: number, y: number) => {
+        ensureRunActive(run)
+        options?.onPixel?.(Math.floor(x), Math.floor(y))
+      },
     }
 
     const sandboxConsole = {

@@ -15,7 +15,14 @@ export function transpile(program: Program): string {
     indentLevel: 0,
   }
 
-  const lines = program.body.flatMap((statement) => transpileStatement(statement, context))
+  const prelude: string[] = []
+  if (program.mode === 'canvas') {
+    const resolution = Math.max(1, program.resolution ?? 16)
+    prelude.push('__tg.ensureActive();')
+    prelude.push(`await __tg.initCanvas(${resolution});`)
+  }
+
+  const lines = [...prelude, ...program.body.flatMap((statement) => transpileStatement(statement, context))]
   return lines.join('\n')
 }
 
@@ -31,6 +38,11 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
     }
     case 'InfodeskStatement':
       return [guard, `${pad}console.log(${transpileExpression(statement.expression)});`]
+    case 'PixelStatement':
+      return [
+        guard,
+        `${pad}await __tg.putPixel(${transpileExpression(statement.x)}, ${transpileExpression(statement.y)});`,
+      ]
     case 'ConditionalStatement': {
       const nestedContext: TranspileContext = {
         declaredVariables: context.declaredVariables,

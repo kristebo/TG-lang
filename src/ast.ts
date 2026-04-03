@@ -1,6 +1,7 @@
 export type Statement =
   | AssignmentStatement
   | InfodeskStatement
+  | PixelStatement
   | ConditionalStatement
   | FunctionDeclaration
   | ReturnStatement
@@ -17,6 +18,8 @@ export type Expression =
 
 export interface Program {
   type: 'Program'
+  mode: 'text' | 'canvas'
+  resolution: number | null
   body: Statement[]
 }
 
@@ -29,6 +32,12 @@ export interface AssignmentStatement {
 export interface InfodeskStatement {
   type: 'InfodeskStatement'
   expression: Expression
+}
+
+export interface PixelStatement {
+  type: 'PixelStatement'
+  x: Expression
+  y: Expression
 }
 
 export interface ConditionalStatement {
@@ -82,7 +91,7 @@ export interface Identifier {
 
 export interface BinaryExpression {
   type: 'BinaryExpression'
-  operator: '+' | '-' | '*' | '/' | '%' | '==='
+  operator: '+' | '-' | '*' | '/' | '%' | '<' | '>' | '==='
   left: Expression
   right: Expression
 }

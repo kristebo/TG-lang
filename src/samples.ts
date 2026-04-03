@@ -5,6 +5,21 @@ interface Example {
 }
 
 export const EXAMPLES: Example[] = [
+  {
+    id: 'vikingskip-canvas',
+    title: 'Vikingskip canvas',
+    code: `vikingskip
+innsjekk
+opplosning arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+piksel(arne, arne)
+piksel(arne arne, arne arne)
+piksel(arne arne arne, arne arne arne)
+piksel(arne arne arne arne, arne arne arne arne)
+
+infodesk rop arne arne arne
+søndag`,
+  },
     {
     id: 'arne-rop',
     title: 'Arne-rop',

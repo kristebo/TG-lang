@@ -8,6 +8,7 @@ import type {
   FunctionDeclaration,
   InfodeskStatement,
   NumberLiteral,
+  PixelStatement,
   Program,
   ReturnStatement,
   RopExpression,
@@ -25,6 +26,9 @@ export class ParseError extends Error {
 }
 
 const RESERVED = new Set([
+  'vikingskip',
+  'opplosning',
+  'piksel',
   'innsjekk',
   'søndag',
   'arne',
@@ -35,6 +39,8 @@ const RESERVED = new Set([
   'kandu',
   'kandustyre',
   'medic',
+  'foam',
+  'maof',
   'kanalseks',
   'secbua',
   'ombud',
@@ -53,9 +59,23 @@ class Parser {
   }
 
   parseProgram(): Program {
+    let mode: 'text' | 'canvas' = 'text'
+    let resolution: number | null = null
+
     this.consumeNewlines()
+
+    if (this.matchWord('vikingskip')) {
+      mode = 'canvas'
+      this.consumeNewlines()
+    }
+
     this.expectWord('innsjekk')
     this.consumeNewlines()
+
+    if (mode === 'canvas' && this.matchWord('opplosning')) {
+      resolution = this.parseArneOnlyValue()
+      this.consumeNewlines()
+    }
 
     const body: Statement[] = []
     while (!this.isWord('søndag') && !this.isType('EOF')) {
@@ -67,12 +87,16 @@ class Parser {
     this.consumeNewlines()
     this.expectType('EOF')
 
-    return { type: 'Program', body }
+    return { type: 'Program', mode, resolution, body }
   }
 
   private parseStatement(): Statement {
     if (this.isWord('infodesk')) {
       return this.parseInfodesk()
+    }
+
+    if (this.isWord('piksel')) {
+      return this.parsePixel()
     }
 
     if (this.isWord('secbua')) {
@@ -162,12 +186,26 @@ class Parser {
 
     this.expectType('ARROW')
     const body = this.parseBlock('Funksjonsblokk ble ikke avsluttet med }.')
-    console.log('Parsed function declaration:', { name, params, body })
     return {
       type: 'FunctionDeclaration',
       name,
       params,
       body,
+    }
+  }
+
+  private parsePixel(): PixelStatement {
+    this.expectWord('piksel')
+    this.expectType('LPAREN')
+    const x = this.parseExpression()
+    this.expectType('COMMA')
+    const y = this.parseExpression()
+    this.expectType('RPAREN')
+
+    return {
+      type: 'PixelStatement',
+      x,
+      y,
     }
   }
 
@@ -233,10 +271,10 @@ class Parser {
   }
 
   private parseEquality(): Expression {
-    let left = this.parseAdditive()
+    let left = this.parseComparison()
 
     while (this.matchWord('kanalseks')) {
-      const right = this.parseAdditive()
+      const right = this.parseComparison()
       const node: BinaryExpression = {
         type: 'BinaryExpression',
         operator: '===',
@@ -244,6 +282,24 @@ class Parser {
         right,
       }
       left = node
+    }
+
+    return left
+  }
+
+  private parseComparison(): Expression {
+    let left = this.parseAdditive()
+
+    while (this.isWord('foam') || this.isWord('maof')) {
+      const word = this.expectType('WORD').value
+      const operator = word === 'foam' ? '<' : '>'
+      const right = this.parseAdditive()
+      left = {
+        type: 'BinaryExpression',
+        operator,
+        left,
+        right,
+      }
     }
 
     return left
@@ -343,6 +399,20 @@ class Parser {
       type: 'NumberLiteral',
       value: count,
     }
+  }
+
+  private parseArneOnlyValue(): number {
+    if (!this.isWord('arne')) {
+      throw this.error(this.peek(), 'opplosning ma vaere en arne-sekvens.')
+    }
+
+    const value = this.parseArneSequence().value
+
+    if (this.isType('WORD')) {
+      throw this.error(this.peek(), 'opplosning kan kun inneholde arne.')
+    }
+
+    return value
   }
 
   private parseRopExpression(): RopExpression {
