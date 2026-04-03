@@ -99,7 +99,9 @@ function transpileExpression(expression: Expression): string {
     case 'RopExpression':
       return transpileRop(expression.expression)
     case 'CallExpression':
-      return `${transpileExpression(expression.callee)}(${expression.args.map((arg) => transpileExpression(arg)).join(', ')})`
+      return `(await ${transpileExpression(expression.callee)}(${expression.args
+        .map((arg) => transpileExpression(arg))
+        .join(', ')}))`
   }
 }
 
