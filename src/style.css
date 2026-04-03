@@ -127,7 +127,7 @@ pre {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.9rem;
   line-height: 1.5;
-  overflow-y: auto;
+  overflow: auto;
   max-height: 45vh;
 }
 
@@ -145,6 +145,7 @@ pre {
   overflow: auto;
   max-height: 45vh;
   margin-bottom: 0.75rem;
+  overflow: auto;
 }
 
 @media (max-width: 900px) {
