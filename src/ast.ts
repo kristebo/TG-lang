@@ -2,6 +2,7 @@ export type Statement =
   | AssignmentStatement
   | InfodeskStatement
   | PixelStatement
+  | ColorRegisterStatement
   | ConditionalStatement
   | FunctionDeclaration
   | ReturnStatement
@@ -39,6 +40,12 @@ export interface PixelStatement {
   type: 'PixelStatement'
   x: Expression
   y: Expression
+}
+
+export interface ColorRegisterStatement {
+  type: 'ColorRegisterStatement'
+  channel: 'onsdag' | 'torsdag' | 'fredag'
+  value: Expression
 }
 
 export interface ConditionalStatement {

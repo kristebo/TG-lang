@@ -2,6 +2,7 @@ import type {
   AssignmentStatement,
   BinaryExpression,
   CallExpression,
+  ColorRegisterStatement,
   ConditionalStatement,
   Expression,
   ExpressionStatement,
@@ -50,6 +51,9 @@ const RESERVED = new Set([
   'sovetelt',
   'attentiongrab',
   'pall',
+  'onsdag',
+  'torsdag',
+  'fredag',
 ])
 
 class Parser {
@@ -95,6 +99,10 @@ class Parser {
   private parseStatement(): Statement {
     if (this.isWord('infodesk')) {
       return this.parseInfodesk()
+    }
+
+    if (this.isWord('onsdag') || this.isWord('torsdag') || this.isWord('fredag')) {
+      return this.parseColorRegister()
     }
 
     if (this.isWord('piksel')) {
@@ -208,6 +216,20 @@ class Parser {
       type: 'PixelStatement',
       x,
       y,
+    }
+  }
+
+  private parseColorRegister(): ColorRegisterStatement {
+    const keyword = this.expectType('WORD')
+    const channel = keyword.value
+    if (channel !== 'onsdag' && channel !== 'torsdag' && channel !== 'fredag') {
+      throw this.error(keyword, `Uventet keyword '${channel}' for fargeregister.`)
+    }
+
+    return {
+      type: 'ColorRegisterStatement',
+      channel,
+      value: this.parseExpression(),
     }
   }
 

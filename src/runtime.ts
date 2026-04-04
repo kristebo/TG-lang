@@ -13,7 +13,7 @@ export interface RunResult {
 export interface RunOptions {
   onOutput?: (line: string, allLines: string[]) => void
   onCanvasInit?: (resolution: number) => void
-  onPixel?: (x: number, y: number) => void
+  onPixel?: (x: number, y: number, r: number, g: number, b: number) => void
 }
 
 interface ActiveRun {
@@ -58,6 +58,7 @@ function stringifyValue(value: unknown): string {
 
 let runCounter = 0
 let activeRun: ActiveRun | null = null
+const TG_CHANNEL_MAX = 15
 
 const isRunActive = (run: ActiveRun): boolean => activeRun?.id === run.id && !run.aborted
 
@@ -122,9 +123,15 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
         const safeResolution = Math.max(1, Math.floor(Number.isFinite(resolution) ? resolution : 1))
         options?.onCanvasInit?.(safeResolution)
       },
-      putPixel: async (x: number, y: number) => {
+      putPixel: async (x: number, y: number, r = 0, g = 0, b = 0) => {
         ensureRunActive(run)
-        options?.onPixel?.(Math.floor(x), Math.floor(y))
+        options?.onPixel?.(
+          Math.floor(x),
+          Math.floor(y),
+          Math.min(TG_CHANNEL_MAX, Math.max(0, Math.floor(r))),
+          Math.min(TG_CHANNEL_MAX, Math.max(0, Math.floor(g))),
+          Math.min(TG_CHANNEL_MAX, Math.max(0, Math.floor(b))),
+        )
       },
     }
 

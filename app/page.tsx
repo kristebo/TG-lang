@@ -5,6 +5,7 @@ import { runTG, stopTG } from '../src/runtime'
 import { EXAMPLES } from '../src/samples'
 
 const DEFAULT_CANVAS_RESOLUTION = 16
+const COLOR_CHANNEL_MAX = 15
 
 export default function Home() {
   const [exampleId, setExampleId] = useState<string>(EXAMPLES[0]?.id ?? '')
@@ -13,7 +14,7 @@ export default function Home() {
   const [javascript, setJavascript] = useState<string>('')
   const [running, setRunning] = useState<boolean>(false)
   const [canvasResolution, setCanvasResolution] = useState<number | null>(null)
-  const [pixels, setPixels] = useState<Array<{ x: number; y: number }>>([])
+  const [pixels, setPixels] = useState<Array<{ x: number; y: number; r: number; g: number; b: number }>>([])
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const isVikingskipMode = /^\s*vikingskip\b/m.test(source)
   const visibleCanvasResolution = isVikingskipMode
@@ -45,8 +46,8 @@ export default function Home() {
       onCanvasInit: (resolution) => {
         setCanvasResolution(resolution)
       },
-      onPixel: (x, y) => {
-        setPixels((current) => [...current, { x, y }])
+      onPixel: (x, y, r, g, b) => {
+        setPixels((current) => [...current, { x, y, r, g, b }])
       },
     })
     setRunning(false)
@@ -90,11 +91,11 @@ export default function Home() {
     ctx.fillStyle = '#0f1516'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    ctx.fillStyle = '#f6f0dc'
     for (const pixel of pixels) {
       if (pixel.x < 0 || pixel.y < 0 || pixel.x >= size || pixel.y >= size) {
         continue
       }
+      ctx.fillStyle = `rgb(${Math.round((pixel.r / COLOR_CHANNEL_MAX) * 255)}, ${Math.round((pixel.g / COLOR_CHANNEL_MAX) * 255)}, ${Math.round((pixel.b / COLOR_CHANNEL_MAX) * 255)})`
       ctx.fillRect(pixel.x * pixelSize, pixel.y * pixelSize, pixelSize, pixelSize)
     }
   }, [visibleCanvasResolution, pixels])
@@ -216,6 +217,9 @@ export default function Home() {
             <li><strong>sovetelt(expr) &#123; &#125;</strong> pauser kjoring i expr sekunder.</li>
             <li><strong>attentiongrab(expr)</strong> kaster en feil.</li>
             <li><strong>piksel(x, y)</strong> setter en piksel i canvas i vikingskip-modus.</li>
+            <li><strong>onsdag expr</strong>, <strong>torsdag expr</strong>, <strong>fredag expr</strong> setter r, g og b i fargeregisteret.</li>
+            <li>Fargedybde per kanal er <strong>arne arne arne arne kandu arne arne arne arne</strong> (0 til 15).</li>
+            <li>Etter hver <strong>piksel</strong> resettes fargeregisteret til <strong>rgb(0, 0, 0)</strong>.</li>
           </ul>
 
           <h3>Avbrytelse</h3>

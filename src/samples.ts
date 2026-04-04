@@ -30,6 +30,40 @@ piksel(arne arne arne arne, arne arne arne arne)
 infodesk rop arne arne arne
 søndag`,
   },
+  {
+    id: 'vikingskip-fargetegning',
+    title: 'Vikingskip fargetegning',
+    code: `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+full = arne arne arne arne kandu arne arne arne arne deltager arne
+halv = full medic arne arne
+
+onsdag full
+piksel(arne arne, arne arne)
+
+torsdag full
+piksel(arne arne arne, arne arne)
+
+fredag full
+piksel(arne arne arne arne, arne arne)
+
+onsdag full
+torsdag full
+piksel(arne arne arne arne arne, arne arne)
+
+onsdag halv
+torsdag halv
+fredag full
+piksel(arne arne arne, arne arne arne)
+
+onsdag full
+fredag halv
+piksel(arne arne arne arne, arne arne arne)
+
+søndag`,
+  },
     {
     id: 'arne-rop',
     title: 'Arne-rop',
@@ -307,6 +341,9 @@ hylle mandel(cx cy zx zy left) => {
 }
 
 hylle p(sx sy cx cy) => {
+  onsdag seksten deltager arne
+  torsdag seksten medic arne arne
+  fredag arne deltager arne
   m = mandel(cx, cy, l, l, maksiter)
   secbua (m) {
     piksel(sx, sy)

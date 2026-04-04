@@ -3,6 +3,7 @@ import type { Expression, Program, Statement } from './ast'
 interface TranspileContext {
   declaredVariables: Set<string>
   indentLevel: number
+  canvasMode: boolean
 }
 
 const INDENT = '  '
@@ -13,6 +14,7 @@ export function transpile(program: Program): string {
   const context: TranspileContext = {
     declaredVariables: new Set<string>(),
     indentLevel: 0,
+    canvasMode: program.mode === 'canvas',
   }
 
   const prelude: string[] = []
@@ -20,6 +22,10 @@ export function transpile(program: Program): string {
     const resolution = Math.max(1, program.resolution ?? 16)
     prelude.push('__tg.ensureActive();')
     prelude.push(`await __tg.initCanvas(${resolution});`)
+    prelude.push('let __tgColorR = 0;')
+    prelude.push('let __tgColorG = 0;')
+    prelude.push('let __tgColorB = 0;')
+    prelude.push('const __tgClampChannel = (value) => Math.min(15, Math.max(0, Math.floor(value)));')
   }
 
   const lines = [...prelude, ...program.body.flatMap((statement) => transpileStatement(statement, context))]
@@ -38,15 +44,31 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
     }
     case 'InfodeskStatement':
       return [guard, `${pad}console.log(${transpileExpression(statement.expression)});`]
-    case 'PixelStatement':
+    case 'PixelStatement': {
+      if (!context.canvasMode) {
+        throw new Error('piksel krever vikingskip-modus.')
+      }
       return [
         guard,
-        `${pad}await __tg.putPixel(${transpileExpression(statement.x)}, ${transpileExpression(statement.y)});`,
+        `${pad}await __tg.putPixel(${transpileExpression(statement.x)}, ${transpileExpression(statement.y)}, __tgColorR, __tgColorG, __tgColorB);`,
+        `${pad}__tgColorR = 0;`,
+        `${pad}__tgColorG = 0;`,
+        `${pad}__tgColorB = 0;`,
       ]
+    }
+    case 'ColorRegisterStatement': {
+      if (!context.canvasMode) {
+        throw new Error('onsdag/torsdag/fredag krever vikingskip-modus.')
+      }
+      const channelVariable =
+        statement.channel === 'onsdag' ? '__tgColorR' : statement.channel === 'torsdag' ? '__tgColorG' : '__tgColorB'
+      return [guard, `${pad}${channelVariable} = __tgClampChannel(${transpileExpression(statement.value)});`]
+    }
     case 'ConditionalStatement': {
       const nestedContext: TranspileContext = {
         declaredVariables: context.declaredVariables,
         indentLevel: context.indentLevel + 1,
+        canvasMode: context.canvasMode,
       }
 
       const thenLines =
@@ -76,6 +98,7 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
       const nestedContext: TranspileContext = {
         declaredVariables: new Set<string>(),
         indentLevel: context.indentLevel + 1,
+        canvasMode: context.canvasMode,
       }
 
       const bodyLines =
