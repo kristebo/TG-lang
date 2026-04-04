@@ -8,6 +8,7 @@ import type {
   FunctionDeclaration,
   InfodeskStatement,
   NumberLiteral,
+  PallExpression,
   PixelStatement,
   Program,
   ReturnStatement,
@@ -48,6 +49,7 @@ const RESERVED = new Set([
   'tech',
   'sovetelt',
   'attentiongrab',
+  'pall',
 ])
 
 class Parser {
@@ -345,6 +347,10 @@ class Parser {
       return this.parseRopExpression()
     }
 
+    if (this.isWord('pall')) {
+      return this.parsePallExpression()
+    }
+
     if (this.isWord('arne')) {
       return this.parseArneSequence()
     }
@@ -424,6 +430,13 @@ class Parser {
     return {
       type: 'RopExpression',
       expression: this.parseAdditive(),
+    }
+  }
+
+  private parsePallExpression(): PallExpression {
+    this.expectWord('pall')
+    return {
+      type: 'PallExpression',
     }
   }
 

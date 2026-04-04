@@ -6,6 +6,16 @@ interface Example {
 
 export const EXAMPLES: Example[] = [
   {
+    id: 'pall-runtime',
+    title: 'pall runtime-verdi',
+    code: `innsjekk
+
+infodesk pall
+infodesk pall
+
+søndag`,
+  },
+  {
     id: 'vikingskip-canvas',
     title: 'Vikingskip canvas',
     code: `vikingskip
@@ -233,6 +243,235 @@ hylle render(rowsleft cy) => {
 }
 
 render(hoyde, ymin)
+
+søndag`
+  },
+  {
+    "id": "Mandelbrot-vikingskip",
+    "title": "Mandelbrot i vikingskip",
+    "code": `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+l = arne deltager arne
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = arne arne arne arne
+fem = arne arne arne arne arne
+
+seks = tre kandu to
+atte = fire kandu to
+ti = fem kandu to
+tolv = ti crew to
+seksten = atte kandu to
+tjue = ti kandu to
+tjuefire = tjue crew fire
+tretti = ti kandu tre
+forti = tjue kandu to
+seksti = tretti kandu to
+atti = forti kandu to
+hundre = ti kandu ti
+hundretjue = hundre crew tjue
+hundrenitten = hundretjue deltager en
+
+skala = forti
+maksiter = tjuefire
+
+xmin = l deltager atti
+ymin = l deltager seksti
+
+xsteg = en
+ysteg = en
+
+hylle mul(a b) => {
+  tech a kandu b medic skala
+}
+
+hylle mandel(cx cy zx zy left) => {
+  xx = mul(zx, zx)
+  yy = mul(zy, zy)
+  mag = xx crew yy
+
+  secbua (mag maof (fire kandu skala)) {
+    tech l
+  } ombud {
+    secbua (left) {
+      nyzx = xx deltager yy crew cx
+      nyzy = mul(to kandu zx, zy) crew cy
+      tech mandel(cx, cy, nyzx, nyzy, left deltager en)
+    } ombud {
+      tech en
+    }
+  }
+}
+
+hylle p(sx sy cx cy) => {
+  m = mandel(cx, cy, l, l, maksiter)
+  secbua (m) {
+    piksel(sx, sy)
+  } ombud {
+  }
+}
+
+hylle rad(x sx sy cx cy) => {
+  secbua (hundretjue maof x) {
+    p(sx, sy, cx, cy)
+    rad(x crew en, sx crew en, sy, cx crew xsteg, cy)
+  } ombud {
+  }
+}
+
+hylle render(y sy cy) => {
+  secbua (hundretjue maof y) {
+    rad(l, l, sy, xmin, cy)
+    render(y crew en, sy crew en, cy crew ysteg)
+  } ombud {
+  }
+}
+
+render(l, l, ymin)
+
+søndag`
+  },
+  {
+    "id": "Julia-sett vikingskip",
+    "title": "Julia-sett i vikingskip",
+    "code": `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+l = arne deltager arne
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = arne arne arne arne
+fem = arne arne arne arne arne
+
+seks = tre kandu to
+atte = fire kandu to
+ti = fem kandu to
+tolv = ti crew to
+seksten = atte kandu to
+tjue = ti kandu to
+tjueatte = tjue crew atte
+tjuefire = tjue crew fire
+tretti = ti kandu tre
+forti = tjue kandu to
+seksti = tretti kandu to
+atti = forti kandu to
+hundre = ti kandu ti
+hundretjue = hundre crew tjue
+
+skala = forti
+maksiter = tjuefire
+
+xmin = l deltager seksti
+ymin = l deltager seksti
+
+xsteg = en
+ysteg = en
+
+juliax = l deltager tjueatte
+juliay = tolv
+
+hylle mul(a b) => {
+  tech a kandu b medic skala
+}
+
+hylle julia(zx zy cx cy left) => {
+  xx = mul(zx, zx)
+  yy = mul(zy, zy)
+  mag = xx crew yy
+
+  secbua (mag maof (fire kandu skala)) {
+    tech l
+  } ombud {
+    secbua (left) {
+      nyzx = xx deltager yy crew cx
+      nyzy = mul(to kandu zx, zy) crew cy
+      tech julia(nyzx, nyzy, cx, cy, left deltager en)
+    } ombud {
+      tech en
+    }
+  }
+}
+
+hylle p(sx sy px py) => {
+  m = julia(px, py, juliax, juliay, maksiter)
+  secbua (m) {
+    piksel(sx, sy)
+  } ombud {
+  }
+}
+
+hylle rad(x sx sy px py) => {
+  secbua (hundretjue maof x) {
+    p(sx, sy, px, py)
+    rad(x crew en, sx crew en, sy, px crew xsteg, py)
+  } ombud {
+  }
+}
+
+hylle render(y sy py) => {
+  secbua (hundretjue maof y) {
+    rad(l, l, sy, xmin, py)
+    render(y crew en, sy crew en, py crew ysteg)
+  } ombud {
+  }
+}
+
+render(l, l, ymin)
+
+søndag`
+  },
+  {
+    "id": "Snake vikingskip",
+    "title": "Snake i vikingskip",
+    "code": `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+l = arne deltager arne
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = arne arne arne arne
+fem = arne arne arne arne arne
+
+seks = tre kandu to
+atte = fire kandu to
+ti = fem kandu to
+tolv = ti crew to
+seksten = atte kandu to
+tjue = ti kandu to
+tretti = ti kandu tre
+forti = tjue kandu to
+trettini = forti deltager en
+
+hylle snake(x y dir) => {
+  secbua (y foam forti) {
+    piksel(x, y)
+    sovetelt(en medic ti)
+
+    secbua (dir) {
+      secbua (x foam trettini) {
+        snake(x crew en, y, dir)
+      } ombud {
+        snake(x, y crew en, l)
+      }
+    } ombud {
+      secbua (x maof l) {
+        snake(x deltager en, y, dir)
+      } ombud {
+        snake(x, y crew en, en)
+      }
+    }
+  } ombud {
+  }
+}
+
+snake(l, l, en)
 
 søndag`
   }

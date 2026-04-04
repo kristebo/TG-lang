@@ -23,6 +23,7 @@ Web-based MVP of TG-lang with:
 
 - `arne` sequence -> numeric value (count of `arne`)
 - `rop arne...` -> uppercase ASCII (`String.fromCharCode(count + 64)`)
+- `pall` -> runtime-generated number where `| 1` is applied to the integer part and the fractional part is preserved
 - `infodesk expr` or `infodesk(expr)` -> `console.log(expr)`
 - Operators: `crew`, `deltager`, `kandu`, `medic`
 - Equality: `kanalseks` -> `===`

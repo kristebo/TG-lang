@@ -14,6 +14,7 @@ export type Expression =
   | Identifier
   | BinaryExpression
   | RopExpression
+  | PallExpression
   | CallExpression
 
 export interface Program {
@@ -100,6 +101,10 @@ export interface RopExpression {
   type: 'RopExpression'
   /** The inner expression. crew (+) at the top level means string concat of chars. */
   expression: Expression
+}
+
+export interface PallExpression {
+  type: 'PallExpression'
 }
 
 export interface CallExpression {
