@@ -19,6 +19,7 @@ export interface RunOptions {
 interface ActiveRun {
   id: number
   aborted: boolean
+  cleanups: Array<() => void>
 }
 
 class TGStopError extends Error {
@@ -106,6 +107,7 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
   const run: ActiveRun = {
     id: ++runCounter,
     aborted: false,
+    cleanups: [],
   }
   activeRun = run
 
@@ -132,6 +134,50 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
           Math.min(TG_CHANNEL_MAX, Math.max(0, Math.floor(g))),
           Math.min(TG_CHANNEL_MAX, Math.max(0, Math.floor(b))),
         )
+      },
+      kreativia: async (rawEventType: unknown, rawKeyCode: unknown, handler: unknown) => {
+        ensureRunActive(run)
+        if (typeof document === 'undefined') return
+
+        const eventType = Math.floor(Number(rawEventType))
+        const keyCode = Math.floor(Number(rawKeyCode))
+
+        const EVENT_NAMES: Record<number, string> = {
+          1: 'keydown',
+          2: 'keyup',
+          3: 'click',
+          4: 'mousemove',
+          5: 'touchstart',
+        }
+        const eventName = EVENT_NAMES[eventType] ?? 'keydown'
+
+        const listener = async (e: Event) => {
+          if (!isRunActive(run)) {
+            document.removeEventListener(eventName, listener as EventListener)
+            return
+          }
+
+          let eventCode = 0
+          if (e instanceof KeyboardEvent) {
+            eventCode = e.keyCode
+            if (keyCode > 0 && eventCode !== keyCode) return
+          } else if (e instanceof MouseEvent) {
+            eventCode = e.button + 1
+            if (keyCode > 0 && eventCode !== keyCode) return
+          }
+
+          try {
+            ensureRunActive(run)
+            if (typeof handler === 'function') {
+              await (handler as (...args: unknown[]) => Promise<unknown>)(eventCode)
+            }
+          } catch {
+            // Silently absorb stop errors fired from event handlers
+          }
+        }
+
+        document.addEventListener(eventName, listener as EventListener)
+        run.cleanups.push(() => document.removeEventListener(eventName, listener as EventListener))
       },
     }
 
@@ -161,6 +207,13 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
   } finally {
     if (activeRun?.id === run.id) {
       activeRun = null
+    }
+    for (const cleanup of run.cleanups) {
+      try {
+        cleanup()
+      } catch {
+        // ignore cleanup errors
+      }
     }
   }
 }

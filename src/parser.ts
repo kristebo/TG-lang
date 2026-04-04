@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   AssignmentStatement,
   BinaryExpression,
   CallExpression,
@@ -9,8 +9,9 @@ import type {
   FunctionDeclaration,
   InfodeskStatement,
   IndexedAssignmentStatement,
+  KreativaStatement,
   LordagExpression,
-  NucExpression,
+  NocExpression,
   NumberLiteral,
   PallExpression,
   PiExpression,
@@ -62,7 +63,8 @@ const RESERVED = new Set([
   'trafikklys',
   'expo',
   'seating',
-  'nuc',
+  'noc',
+  'kreativia',
   'onsdag',
   'torsdag',
   'fredag',
@@ -141,6 +143,10 @@ class Parser {
       return this.parseThrow()
     }
 
+    if (this.isWord('kreativia')) {
+      return this.parseKreativaStatement()
+    }
+
     if (this.isIndexedAssignmentStart()) {
       return this.parseIndexedAssignment()
     }
@@ -177,7 +183,7 @@ class Parser {
       throw this.error(nameToken, `Ugyldig variabelnavn '${nameToken.value}'.`)
     }
 
-    this.expectWord('nuc')
+    this.expectWord('noc')
     const index = this.parseExpression()
     this.expectType('EQUALS')
 
@@ -324,6 +330,19 @@ class Parser {
     }
   }
 
+  private parseKreativaStatement(): KreativaStatement {
+    this.expectWord('kreativia')
+    const eventType = this.parsePrimary()
+    const keyCode = this.parsePrimary()
+    const handler = this.parsePrimary()
+    return {
+      type: 'KreativaStatement',
+      eventType,
+      keyCode,
+      handler,
+    }
+  }
+
   private parseExpression(): Expression {
     return this.parseEquality()
   }
@@ -419,8 +438,8 @@ class Parser {
         continue
       }
 
-      if (this.matchWord('nuc')) {
-        expression = this.parseNucExpression(expression)
+      if (this.matchWord('noc')) {
+        expression = this.parseNocExpression(expression)
         continue
       }
 
@@ -584,17 +603,17 @@ class Parser {
   private parseSeatingLengthExpression(): Expression {
     let expression = this.parseAtomicPrimary()
 
-    while (this.matchWord('nuc')) {
-      expression = this.parseNucExpression(expression)
+    while (this.matchWord('noc')) {
+      expression = this.parseNocExpression(expression)
     }
 
     return expression
   }
 
-  private parseNucExpression(target: Expression): NucExpression {
+  private parseNocExpression(target: Expression): NocExpression {
     const index = this.parsePrimary()
     return {
-      type: 'NucExpression',
+      type: 'NocExpression',
       target,
       index,
     }
@@ -680,7 +699,7 @@ class Parser {
   private isIndexedAssignmentStart(): boolean {
     const token = this.peek()
     const next = this.peek(1)
-    return token.type === 'WORD' && !RESERVED.has(token.value) && next.type === 'WORD' && next.value === 'nuc'
+    return token.type === 'WORD' && !RESERVED.has(token.value) && next.type === 'WORD' && next.value === 'noc'
   }
 }
 

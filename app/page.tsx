@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { runTG, stopTG } from '../src/runtime'
@@ -180,11 +180,20 @@ export default function Home() {
             <li><strong>expo(theta-arne)</strong> representerer <strong>sin(theta)</strong>.</li>
             <li><strong>trafikklys(theta-arne)</strong> representerer <strong>tan(theta)</strong>.</li>
             <li><strong>seating len-arne(expr, expr, ...)</strong> lager en fast array med angitt lengde og valgfrie startverdier.</li>
-            <li><strong>str nuc index-arne</strong> henter tegn eller element med 1-basert indeks fra streng eller seating-array.</li>
-            <li><strong>navn nuc indeks = verdi</strong> skriver verdi til et seating-element med direkte array-indeks.</li>
+            <li><strong>str noc index-arne</strong> henter tegn eller element med 1-basert indeks fra streng eller seating-array.</li>
+            <li><strong>navn noc indeks = verdi</strong> skriver verdi til et seating-element med direkte array-indeks.</li>
             <li><strong>lørdag arr</strong> returnerer <strong>arr.join('')</strong>.</li>
             <li><strong>rop</strong> støtter uttrykk og konkatenering med <strong>crew</strong>.</li>
             <li>Talltegn er ikke tillatt i kildekoden. Numeriske verdier må uttrykkes med arne-sekvenser.</li>
+          </ul>
+
+          <h3>Hendelser (kreativia)</h3>
+          <ul>
+            <li><strong>kreativia (hendelsestype) (kode) handler</strong> registrerer en hendelsesfunksjon.</li>
+            <li>Hendelsestype (arne-tall): <strong>arne</strong>=keydown, <strong>arne arne</strong>=keyup, <strong>arne arne arne</strong>=klikk, <strong>arne arne arne arne</strong>=musebevegelse, <strong>arne arne arne arne arne</strong>=berøring.</li>
+            <li>Kode: for tastatur = ASCII-kode for ønsket tast, for mus = knapp (arne=venstre, arne arne=midt, arne arne arne=høyre). Bruk <strong>arne deltager arne</strong> (=0) for å lytte på alle taster/knapper.</li>
+            <li>Handler kalles med koden for hendelsen som argument (f.eks. keyCode for tastatur).</li>
+            <li>Alle lyttere ryddes automatisk opp når programmet stopper.</li>
           </ul>
 
           <h3>Output</h3>

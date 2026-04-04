@@ -1,4 +1,4 @@
-export type Statement =
+﻿export type Statement =
   | AssignmentStatement
   | IndexedAssignmentStatement
   | InfodeskStatement
@@ -10,6 +10,7 @@ export type Statement =
   | SleepStatement
   | ThrowStatement
   | ExpressionStatement
+  | KreativaStatement
 
 export type Expression =
   | NumberLiteral
@@ -21,7 +22,7 @@ export type Expression =
   | PiExpression
   | TrigExpression
   | SeatingExpression
-  | NucExpression
+  | NocExpression
   | CallExpression
 
 export interface Program {
@@ -148,8 +149,8 @@ export interface SeatingExpression {
   elements: Expression[]
 }
 
-export interface NucExpression {
-  type: 'NucExpression'
+export interface NocExpression {
+  type: 'NocExpression'
   target: Expression
   index: Expression
 }
@@ -158,4 +159,11 @@ export interface CallExpression {
   type: 'CallExpression'
   callee: Expression
   args: Expression[]
+}
+
+export interface KreativaStatement {
+  type: 'KreativaStatement'
+  eventType: Expression
+  keyCode: Expression
+  handler: Expression
 }

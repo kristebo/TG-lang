@@ -1,4 +1,4 @@
-interface Example {
+﻿interface Example {
   id: string
   title: string
   code: string
@@ -108,8 +108,8 @@ tegn(l, tjuefire)
 søndag`,
   },
   {
-    id: 'nuc-seating-teksthjul',
-    title: 'nuc + seating teksthjul',
+    id: 'noc-seating-teksthjul',
+    title: 'noc + seating teksthjul',
     code: `innsjekk
 
 en = arne
@@ -123,14 +123,73 @@ kilde = rop arne arne arne arne arne arne arne crew rop arne arne arne arne arne
 infodesk kilde
 hjul = seating seks
 
-hjul nuc arne deltager arne = kilde nuc seks
-hjul nuc en = kilde nuc fem
-hjul nuc to = kilde nuc fire
-hjul nuc tre = kilde nuc tre
-hjul nuc fire = kilde nuc to
-hjul nuc fem = kilde nuc en
+hjul noc arne deltager arne = kilde noc seks
+hjul noc en = kilde noc fem
+hjul noc to = kilde noc fire
+hjul noc tre = kilde noc tre
+hjul noc fire = kilde noc to
+hjul noc fem = kilde noc en
 
 infodesk(lørdag hjul)
+
+søndag`,
+  },
+  {
+    id: 'bubble-sort-562930',
+    title: 'Bubble sort 562930 (viser steg)',
+    code: `innsjekk
+
+l = arne deltager arne
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = arne arne arne arne
+fem = arne arne arne arne arne
+seks = tre kandu to
+ni = tre kandu tre
+
+tall = seating seks
+tall noc l = fem
+tall noc en = seks
+tall noc to = to
+tall noc tre = ni
+tall noc fire = tre
+tall noc fem = l
+
+infodesk(lørdag tall)
+
+hylle bytt(arr i j) => {
+  temp = arr noc (i crew en)
+  arr noc i = arr noc (j crew en)
+  arr noc j = temp
+  infodesk(lørdag arr)
+}
+
+hylle bobleinner(arr j grense) => {
+  secbua (j foam grense) {
+    venstre = arr noc (j crew en)
+    hoyre = arr noc (j crew to)
+
+    secbua (hoyre foam venstre) {
+      bytt(arr, j, j crew en)
+    } ombud {
+    }
+
+    bobleinner(arr, j crew en, grense)
+  } ombud {
+  }
+}
+
+hylle bobleytre(arr grense) => {
+  secbua (grense maof l) {
+    bobleinner(arr, l, grense)
+    bobleytre(arr, grense deltager en)
+  } ombud {
+  }
+}
+
+bobleytre(tall, seks deltager en)
+infodesk(lørdag tall)
 
 søndag`,
   },

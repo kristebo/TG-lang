@@ -1,4 +1,4 @@
-import type { Expression, Program, Statement } from './ast'
+﻿import type { Expression, Program, Statement } from './ast'
 
 interface TranspileContext {
   localBindings: Set<string>
@@ -123,6 +123,11 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
       return [guard, `${pad}throw new Error(String(${transpileExpression(statement.expression, context)}));`]
     case 'ExpressionStatement':
       return [guard, `${pad}await ${transpileExpression(statement.expression, context)};`]
+    case 'KreativaStatement':
+      return [
+        guard,
+        `${pad}await __tg.kreativia(${transpileExpression(statement.eventType, context)}, ${transpileExpression(statement.keyCode, context)}, ${transpileExpression(statement.handler, context)});`,
+      ]
   }
 }
 
@@ -156,7 +161,7 @@ function transpileExpression(expression: Expression, context: TranspileContext):
   })
   return __tgArray
 })()`
-    case 'NucExpression':
+    case 'NocExpression':
       return `(() => {
   const __tgTarget = ${transpileExpression(expression.target, context)}
   const __tgIndex = Math.max(0, Math.floor(${transpileExpression(expression.index, context)}) - 1)
