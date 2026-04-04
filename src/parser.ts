@@ -8,6 +8,8 @@ import type {
   ExpressionStatement,
   FunctionDeclaration,
   InfodeskStatement,
+  IndexedAssignmentStatement,
+  NucExpression,
   NumberLiteral,
   PallExpression,
   PiExpression,
@@ -15,6 +17,7 @@ import type {
   Program,
   ReturnStatement,
   RopExpression,
+  SeatingExpression,
   SleepStatement,
   Statement,
   TrigExpression,
@@ -56,6 +59,8 @@ const RESERVED = new Set([
   'premiumparkering',
   'trafikklys',
   'expo',
+  'seating',
+  'nuc',
   'onsdag',
   'torsdag',
   'fredag',
@@ -134,6 +139,10 @@ class Parser {
       return this.parseThrow()
     }
 
+    if (this.isIndexedAssignmentStart()) {
+      return this.parseIndexedAssignment()
+    }
+
     if (this.isType('WORD') && this.peek(1).type === 'EQUALS') {
       return this.parseAssignment()
     }
@@ -156,6 +165,24 @@ class Parser {
     return {
       type: 'AssignmentStatement',
       name: nameToken.value,
+      value: this.parseExpression(),
+    }
+  }
+
+  private parseIndexedAssignment(): IndexedAssignmentStatement {
+    const nameToken = this.expectType('WORD')
+    if (RESERVED.has(nameToken.value)) {
+      throw this.error(nameToken, `Ugyldig variabelnavn '${nameToken.value}'.`)
+    }
+
+    this.expectWord('nuc')
+    const index = this.parseExpression()
+    this.expectType('EQUALS')
+
+    return {
+      type: 'IndexedAssignmentStatement',
+      name: nameToken.value,
+      index,
       value: this.parseExpression(),
     }
   }
@@ -370,6 +397,40 @@ class Parser {
   }
 
   private parsePrimary(): Expression {
+    let expression = this.parseAtomicPrimary()
+
+    while (true) {
+      if (this.matchType('LPAREN')) {
+        const args: Expression[] = []
+        while (!this.isType('RPAREN')) {
+          args.push(this.parseExpression())
+          this.matchType('COMMA')
+        }
+        this.expectType('RPAREN')
+
+        const call: CallExpression = {
+          type: 'CallExpression',
+          callee: expression,
+          args,
+        }
+        expression = call
+        continue
+      }
+
+      if (this.matchWord('nuc')) {
+        expression = this.parseNucExpression(expression)
+        continue
+      }
+
+      return expression
+    }
+  }
+
+  private parseAtomicPrimary(): Expression {
+    if (this.isWord('seating')) {
+      return this.parseSeatingExpression()
+    }
+
     if (this.isWord('rop')) {
       return this.parseRopExpression()
     }
@@ -406,28 +467,10 @@ class Parser {
         throw this.error(identifierToken, `Uventet keyword '${identifierToken.value}' i uttrykk.`)
       }
 
-      let expression: Expression = {
+      return {
         type: 'Identifier',
         name: identifierToken.value,
       }
-
-      while (this.matchType('LPAREN')) {
-        const args: Expression[] = []
-        while (!this.isType('RPAREN')) {
-          args.push(this.parseExpression())
-          this.matchType('COMMA')
-        }
-        this.expectType('RPAREN')
-
-        const call: CallExpression = {
-          type: 'CallExpression',
-          callee: expression,
-          args,
-        }
-        expression = call
-      }
-
-      return expression
     }
 
     throw this.error(this.peek(), `Uventet token '${this.peek().value || this.peek().type}' i uttrykk.`)
@@ -499,6 +542,47 @@ class Parser {
       type: 'TrigExpression',
       fn,
       angle,
+    }
+  }
+
+  private parseSeatingExpression(): SeatingExpression {
+    this.expectWord('seating')
+    const length = this.parseSeatingLengthExpression()
+    const elements: Expression[] = []
+
+    if (this.matchType('LPAREN')) {
+      this.consumeNewlines()
+      while (!this.isType('RPAREN')) {
+        elements.push(this.parseExpression())
+        this.matchType('COMMA')
+        this.consumeNewlines()
+      }
+      this.expectType('RPAREN')
+    }
+
+    return {
+      type: 'SeatingExpression',
+      length,
+      elements,
+    }
+  }
+
+  private parseSeatingLengthExpression(): Expression {
+    let expression = this.parseAtomicPrimary()
+
+    while (this.matchWord('nuc')) {
+      expression = this.parseNucExpression(expression)
+    }
+
+    return expression
+  }
+
+  private parseNucExpression(target: Expression): NucExpression {
+    const index = this.parsePrimary()
+    return {
+      type: 'NucExpression',
+      target,
+      index,
     }
   }
 
@@ -577,6 +661,12 @@ class Parser {
 
   private error(token: Token, message: string): ParseError {
     return new ParseError(`${message} (linje ${token.line}, kolonne ${token.column})`)
+  }
+
+  private isIndexedAssignmentStart(): boolean {
+    const token = this.peek()
+    const next = this.peek(1)
+    return token.type === 'WORD' && !RESERVED.has(token.value) && next.type === 'WORD' && next.value === 'nuc'
   }
 }
 

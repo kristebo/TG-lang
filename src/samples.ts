@@ -107,6 +107,33 @@ hylle tegn(vinkel teller) => {
 tegn(l, tjuefire)
 søndag`,
   },
+  {
+    id: 'nuc-seating-teksthjul',
+    title: 'nuc + seating teksthjul',
+    code: `innsjekk
+
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = arne arne arne arne
+fem = arne arne arne arne arne
+seks = tre kandu to
+
+kilde = rop arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne
+infodesk kilde
+hjul = seating seks
+
+hjul nuc arne deltager arne = kilde nuc seks
+hjul nuc en = kilde nuc fem
+hjul nuc to = kilde nuc fire
+hjul nuc tre = kilde nuc tre
+hjul nuc fire = kilde nuc to
+hjul nuc fem = kilde nuc en
+
+infodesk(rop hjul)
+
+søndag`,
+  },
     {
     id: 'arne-rop',
     title: 'Arne-rop',

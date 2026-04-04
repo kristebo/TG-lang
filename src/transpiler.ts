@@ -1,7 +1,7 @@
 import type { Expression, Program, Statement } from './ast'
 
 interface TranspileContext {
-  declaredVariables: Set<string>
+  localBindings: Set<string>
   indentLevel: number
   canvasMode: boolean
 }
@@ -12,19 +12,19 @@ const renderIndent = (level: number): string => INDENT.repeat(level)
 
 export function transpile(program: Program): string {
   const context: TranspileContext = {
-    declaredVariables: new Set<string>(),
+    localBindings: new Set<string>(),
     indentLevel: 0,
     canvasMode: program.mode === 'canvas',
   }
 
-  const prelude: string[] = []
+  const prelude: string[] = ['const __tgVars = Object.create(null);']
   if (program.mode === 'canvas') {
     const resolution = Math.max(1, program.resolution ?? 16)
     prelude.push('__tg.ensureActive();')
     prelude.push(`await __tg.initCanvas(${resolution});`)
-    prelude.push('let __tgColorR = 0;')
-    prelude.push('let __tgColorG = 0;')
-    prelude.push('let __tgColorB = 0;')
+    prelude.push('__tgVars.__tgColorR = 0;')
+    prelude.push('__tgVars.__tgColorG = 0;')
+    prelude.push('__tgVars.__tgColorB = 0;')
     prelude.push('const __tgClampChannel = (value) => Math.min(15, Math.max(0, Math.floor(value)));')
   }
 
@@ -38,22 +38,25 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
 
   switch (statement.type) {
     case 'AssignmentStatement': {
-      const declaration = context.declaredVariables.has(statement.name) ? '' : 'let '
-      context.declaredVariables.add(statement.name)
-      return [guard, `${pad}${declaration}${statement.name} = ${transpileExpression(statement.value)};`]
+      const target = context.localBindings.has(statement.name) ? statement.name : `__tgVars.${statement.name}`
+      return [guard, `${pad}${target} = ${transpileExpression(statement.value, context)};`]
+    }
+    case 'IndexedAssignmentStatement': {
+      const target = context.localBindings.has(statement.name) ? statement.name : `__tgVars.${statement.name}`
+      return [guard, `${pad}${target}[Math.floor(${transpileExpression(statement.index, context)})] = ${transpileExpression(statement.value, context)};`]
     }
     case 'InfodeskStatement':
-      return [guard, `${pad}console.log(${transpileExpression(statement.expression)});`]
+      return [guard, `${pad}console.log(${transpileExpression(statement.expression, context)});`]
     case 'PixelStatement': {
       if (!context.canvasMode) {
         throw new Error('piksel krever vikingskip-modus.')
       }
       return [
         guard,
-        `${pad}await __tg.putPixel(${transpileExpression(statement.x)}, ${transpileExpression(statement.y)}, __tgColorR, __tgColorG, __tgColorB);`,
-        `${pad}__tgColorR = 0;`,
-        `${pad}__tgColorG = 0;`,
-        `${pad}__tgColorB = 0;`,
+        `${pad}await __tg.putPixel(${transpileExpression(statement.x, context)}, ${transpileExpression(statement.y, context)}, __tgVars.__tgColorR, __tgVars.__tgColorG, __tgVars.__tgColorB);`,
+        `${pad}__tgVars.__tgColorR = 0;`,
+        `${pad}__tgVars.__tgColorG = 0;`,
+        `${pad}__tgVars.__tgColorB = 0;`,
       ]
     }
     case 'ColorRegisterStatement': {
@@ -61,12 +64,12 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
         throw new Error('onsdag/torsdag/fredag krever vikingskip-modus.')
       }
       const channelVariable =
-        statement.channel === 'onsdag' ? '__tgColorR' : statement.channel === 'torsdag' ? '__tgColorG' : '__tgColorB'
-      return [guard, `${pad}${channelVariable} = __tgClampChannel(${transpileExpression(statement.value)});`]
+        statement.channel === 'onsdag' ? '__tgVars.__tgColorR' : statement.channel === 'torsdag' ? '__tgVars.__tgColorG' : '__tgVars.__tgColorB'
+      return [guard, `${pad}${channelVariable} = __tgClampChannel(${transpileExpression(statement.value, context)});`]
     }
     case 'ConditionalStatement': {
       const nestedContext: TranspileContext = {
-        declaredVariables: context.declaredVariables,
+        localBindings: context.localBindings,
         indentLevel: context.indentLevel + 1,
         canvasMode: context.canvasMode,
       }
@@ -76,7 +79,7 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
           ? statement.thenBody.flatMap((inner) => transpileStatement(inner, nestedContext))
           : [`${renderIndent(context.indentLevel + 1)}/* empty */`]
 
-      const lines = [guard, `${pad}if (${transpileExpression(statement.condition)}) {`, ...thenLines, `${pad}}`]
+      const lines = [guard, `${pad}if (${transpileExpression(statement.condition, context)}) {`, ...thenLines, `${pad}}`]
 
       if (statement.elseBody) {
         const elseLines =
@@ -92,11 +95,11 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
     case 'FunctionDeclaration': {
       const signature = `async (${statement.params.join(', ')}) => {`
       const start = statement.name
-        ? `${pad}const ${statement.name} = ${signature}`
+        ? `${pad}__tgVars.${statement.name} = ${signature}`
         : `${pad}${signature}`
 
       const nestedContext: TranspileContext = {
-        declaredVariables: new Set<string>(),
+        localBindings: new Set<string>(statement.params),
         indentLevel: context.indentLevel + 1,
         canvasMode: context.canvasMode,
       }
@@ -110,40 +113,56 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
       return [guard, start, ...bodyLines, end]
     }
     case 'ReturnStatement':
-      return [guard, `${pad}return ${transpileExpression(statement.expression)};`]
+      return [guard, `${pad}return ${transpileExpression(statement.expression, context)};`]
     case 'SleepStatement':
       return [
         guard,
-        `${pad}await __tg.sleep((${transpileExpression(statement.duration)}) * 1000);`,
+        `${pad}await __tg.sleep((${transpileExpression(statement.duration, context)}) * 1000);`,
       ]
     case 'ThrowStatement':
-      return [guard, `${pad}throw new Error(String(${transpileExpression(statement.expression)}));`]
+      return [guard, `${pad}throw new Error(String(${transpileExpression(statement.expression, context)}));`]
     case 'ExpressionStatement':
-      return [guard, `${pad}await ${transpileExpression(statement.expression)};`]
+      return [guard, `${pad}await ${transpileExpression(statement.expression, context)};`]
   }
 }
 
-function transpileExpression(expression: Expression): string {
+function transpileExpression(expression: Expression, context: TranspileContext): string {
   switch (expression.type) {
     case 'NumberLiteral':
       return `${expression.value}`
     case 'Identifier':
-      return expression.name
+      return context.localBindings.has(expression.name) ? expression.name : `__tgVars.${expression.name}`
     case 'BinaryExpression':
-      return `(${transpileExpression(expression.left)} ${expression.operator} ${transpileExpression(expression.right)})`
+      return `(${transpileExpression(expression.left, context)} ${expression.operator} ${transpileExpression(expression.right, context)})`
     case 'RopExpression':
-      return transpileRop(expression.expression)
+      return transpileRop(expression.expression, context)
     case 'PallExpression':
       return `__tg.pall()`
     case 'PiExpression':
       return `Math.PI`
     case 'TrigExpression':
       return expression.fn === 'sin'
-        ? `Math.sin(${transpileExpression(expression.angle)})`
-        : `Math.tan(${transpileExpression(expression.angle)})`
+        ? `Math.sin(${transpileExpression(expression.angle, context)})`
+        : `Math.tan(${transpileExpression(expression.angle, context)})`
+    case 'SeatingExpression':
+      return `(() => {
+  const __tgLength = Math.max(0, Math.floor(${transpileExpression(expression.length, context)}))
+  const __tgValues = [${expression.elements.map((element) => transpileExpression(element, context)).join(', ')}]
+  const __tgArray = Array(__tgLength)
+  __tgValues.slice(0, __tgLength).forEach((__tgValue, __tgIndex) => {
+    __tgArray[__tgIndex] = __tgValue
+  })
+  return __tgArray
+})()`
+    case 'NucExpression':
+      return `(() => {
+  const __tgTarget = ${transpileExpression(expression.target, context)}
+  const __tgIndex = Math.max(0, Math.floor(${transpileExpression(expression.index, context)}) - 1)
+  return typeof __tgTarget === 'string' ? __tgTarget.charAt(__tgIndex) : __tgTarget?.[__tgIndex]
+})()`
     case 'CallExpression':
-      return `(await ${transpileExpression(expression.callee)}(${expression.args
-        .map((arg) => transpileExpression(arg))
+      return `(await ${transpileExpression(expression.callee, context)}(${expression.args
+        .map((arg) => transpileExpression(arg, context))
         .join(', ')}))`
   }
 }
@@ -154,14 +173,12 @@ function transpileExpression(expression: Expression): string {
  * - any other binary op   => numeric computation, then one fromCharCode
  * - NumberLiteral          => String.fromCharCode(n + 64)
  */
-function transpileRop(expression: Expression): string {
+function transpileRop(expression: Expression, context: TranspileContext): string {
   if (expression.type === 'NumberLiteral') {
     return `String.fromCharCode(${expression.value} + 64)`
   }
   if (expression.type === 'BinaryExpression' && expression.operator === '+') {
-    return `(${transpileRop(expression.left)} + ${transpileRop(expression.right)})`
+    return `(${transpileRop(expression.left, context)} + ${transpileRop(expression.right, context)})`
   }
-  // Any other expression (kandu, medic, deltager, identifiers, calls, …):
-  // compute the numeric result first, then convert to a single char.
-  return `(${transpileExpression(expression)})`
+  return `(${transpileExpression(expression, context)}).join('')`
 }

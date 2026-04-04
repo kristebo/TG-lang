@@ -179,6 +179,10 @@ export default function Home() {
             <li><strong>premiumparkering</strong> representerer <strong>PI</strong>.</li>
             <li><strong>expo(theta-arne)</strong> representerer <strong>sin(theta)</strong>.</li>
             <li><strong>trafikklys(theta-arne)</strong> representerer <strong>tan(theta)</strong>.</li>
+            <li><strong>seating len-arne(expr, expr, ...)</strong> lager en fast array med angitt lengde og valgfrie startverdier.</li>
+            <li><strong>str nuc index-arne</strong> henter tegn eller element med 1-basert indeks fra streng eller seating-array.</li>
+            <li><strong>navn nuc indeks = verdi</strong> skriver verdi til et seating-element med direkte array-indeks.</li>
+            <li><strong>rop</strong> konverterer arne-sekvenser til bokstaver, og kaller <strong>.join('')</strong> for andre uttrykk som arrays.</li>
             <li><strong>rop</strong> støtter uttrykk og konkatenering med <strong>crew</strong>.</li>
             <li>Talltegn er ikke tillatt i kildekoden. Numeriske verdier må uttrykkes med arne-sekvenser.</li>
           </ul>

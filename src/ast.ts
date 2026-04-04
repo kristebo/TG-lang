@@ -1,5 +1,6 @@
 export type Statement =
   | AssignmentStatement
+  | IndexedAssignmentStatement
   | InfodeskStatement
   | PixelStatement
   | ColorRegisterStatement
@@ -18,6 +19,8 @@ export type Expression =
   | PallExpression
   | PiExpression
   | TrigExpression
+  | SeatingExpression
+  | NucExpression
   | CallExpression
 
 export interface Program {
@@ -30,6 +33,13 @@ export interface Program {
 export interface AssignmentStatement {
   type: 'AssignmentStatement'
   name: string
+  value: Expression
+}
+
+export interface IndexedAssignmentStatement {
+  type: 'IndexedAssignmentStatement'
+  name: string
+  index: Expression
   value: Expression
 }
 
@@ -124,6 +134,18 @@ export interface TrigExpression {
   type: 'TrigExpression'
   fn: 'sin' | 'tan'
   angle: Expression
+}
+
+export interface SeatingExpression {
+  type: 'SeatingExpression'
+  length: Expression
+  elements: Expression[]
+}
+
+export interface NucExpression {
+  type: 'NucExpression'
+  target: Expression
+  index: Expression
 }
 
 export interface CallExpression {
