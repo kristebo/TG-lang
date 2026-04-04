@@ -135,6 +135,12 @@ function transpileExpression(expression: Expression): string {
       return transpileRop(expression.expression)
     case 'PallExpression':
       return `__tg.pall()`
+    case 'PiExpression':
+      return `Math.PI`
+    case 'TrigExpression':
+      return expression.fn === 'sin'
+        ? `Math.sin(${transpileExpression(expression.angle)})`
+        : `Math.tan(${transpileExpression(expression.angle)})`
     case 'CallExpression':
       return `(await ${transpileExpression(expression.callee)}(${expression.args
         .map((arg) => transpileExpression(arg))

@@ -64,6 +64,49 @@ piksel(arne arne arne arne, arne arne arne)
 
 søndag`,
   },
+  {
+    id: 'vikingskip-trig-sirkel',
+    title: 'Vikingskip trig-sirkel',
+    code: `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+l = arne deltager arne
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = to kandu to
+seks = tre kandu to
+atte = fire kandu to
+seksten = atte kandu to
+tjuefire = seksten crew atte
+femten = seksten deltager en
+
+senter = atte
+radius = seks
+
+halvpi = premiumparkering medic to
+topi = premiumparkering kandu to
+steg = topi medic tjuefire
+
+hylle tegn(vinkel teller) => {
+  secbua (teller) {
+    x = senter crew (radius kandu expo(vinkel))
+    y = senter crew (radius kandu expo(vinkel crew halvpi))
+
+    onsdag femten
+    torsdag seksten deltager fire
+    fredag femten
+    piksel(x, y)
+
+    tegn(vinkel crew steg, teller deltager en)
+  } ombud {
+  }
+}
+
+tegn(l, tjuefire)
+søndag`,
+  },
     {
     id: 'arne-rop',
     title: 'Arne-rop',

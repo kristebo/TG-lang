@@ -176,6 +176,9 @@ export default function Home() {
             <li><strong>arne</strong> representerer 1. Flere arne i sekvens gir tilsvarende heltall.</li>
             <li><strong>rop</strong> er et uttrykk som konverterer arne-baserte verdier til bokstaver.</li>
             <li><strong>pall</strong> gir en runtime-generert tallverdi der <strong>| 1</strong> brukes pa heltallsdelen, men desimaldelen beholdes.</li>
+            <li><strong>premiumparkering</strong> representerer <strong>PI</strong>.</li>
+            <li><strong>expo(theta-arne)</strong> representerer <strong>sin(theta)</strong>.</li>
+            <li><strong>trafikklys(theta-arne)</strong> representerer <strong>tan(theta)</strong>.</li>
             <li><strong>rop</strong> støtter uttrykk og konkatenering med <strong>crew</strong>.</li>
             <li>Talltegn er ikke tillatt i kildekoden. Numeriske verdier må uttrykkes med arne-sekvenser.</li>
           </ul>
@@ -196,7 +199,7 @@ export default function Home() {
             <li><strong>kandustyre</strong> = %</li>
             <li><strong>foam</strong> = &lt;</li>
             <li><strong>maof</strong> = &gt;</li>
-            <li><strong>kanalseks</strong> = ===</li>
+            <li><strong>kanalseks</strong> = ==</li>
           </ul>
 
           <h3>Kontrollflyt</h3>

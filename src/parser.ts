@@ -10,12 +10,14 @@ import type {
   InfodeskStatement,
   NumberLiteral,
   PallExpression,
+  PiExpression,
   PixelStatement,
   Program,
   ReturnStatement,
   RopExpression,
   SleepStatement,
   Statement,
+  TrigExpression,
   ThrowStatement,
 } from './ast'
 import type { Token } from './tokenizer'
@@ -51,6 +53,9 @@ const RESERVED = new Set([
   'sovetelt',
   'attentiongrab',
   'pall',
+  'premiumparkering',
+  'trafikklys',
+  'expo',
   'onsdag',
   'torsdag',
   'fredag',
@@ -301,7 +306,7 @@ class Parser {
       const right = this.parseComparison()
       const node: BinaryExpression = {
         type: 'BinaryExpression',
-        operator: '===',
+        operator: '==',
         left,
         right,
       }
@@ -371,6 +376,18 @@ class Parser {
 
     if (this.isWord('pall')) {
       return this.parsePallExpression()
+    }
+
+    if (this.isWord('premiumparkering')) {
+      return this.parsePiExpression()
+    }
+
+    if (this.isWord('trafikklys')) {
+      return this.parseTrigExpression('tan')
+    }
+
+    if (this.isWord('expo')) {
+      return this.parseTrigExpression('sin')
     }
 
     if (this.isWord('arne')) {
@@ -459,6 +476,29 @@ class Parser {
     this.expectWord('pall')
     return {
       type: 'PallExpression',
+    }
+  }
+
+  private parsePiExpression(): PiExpression {
+    this.expectWord('premiumparkering')
+    return {
+      type: 'PiExpression',
+    }
+  }
+
+  private parseTrigExpression(fn: 'sin' | 'tan'): TrigExpression {
+    if (fn === 'sin') {
+      this.expectWord('expo')
+    } else {
+      this.expectWord('trafikklys')
+    }
+    this.expectType('LPAREN')
+    const angle = this.parseExpression()
+    this.expectType('RPAREN')
+    return {
+      type: 'TrigExpression',
+      fn,
+      angle,
     }
   }
 

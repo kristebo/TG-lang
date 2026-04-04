@@ -16,6 +16,8 @@ export type Expression =
   | BinaryExpression
   | RopExpression
   | PallExpression
+  | PiExpression
+  | TrigExpression
   | CallExpression
 
 export interface Program {
@@ -99,7 +101,7 @@ export interface Identifier {
 
 export interface BinaryExpression {
   type: 'BinaryExpression'
-  operator: '+' | '-' | '*' | '/' | '%' | '<' | '>' | '==='
+  operator: '+' | '-' | '*' | '/' | '%' | '<' | '>' | '=='
   left: Expression
   right: Expression
 }
@@ -112,6 +114,16 @@ export interface RopExpression {
 
 export interface PallExpression {
   type: 'PallExpression'
+}
+
+export interface PiExpression {
+  type: 'PiExpression'
+}
+
+export interface TrigExpression {
+  type: 'TrigExpression'
+  fn: 'sin' | 'tan'
+  angle: Expression
 }
 
 export interface CallExpression {
