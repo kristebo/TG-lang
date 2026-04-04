@@ -110,6 +110,8 @@ function transpileExpression(expression: Expression): string {
       return `(${transpileExpression(expression.left)} ${expression.operator} ${transpileExpression(expression.right)})`
     case 'RopExpression':
       return transpileRop(expression.expression)
+    case 'PallExpression':
+      return `__tg.pall()`
     case 'CallExpression':
       return `(await ${transpileExpression(expression.callee)}(${expression.args
         .map((arg) => transpileExpression(arg))

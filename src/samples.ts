@@ -6,6 +6,16 @@ interface Example {
 
 export const EXAMPLES: Example[] = [
   {
+    id: 'pall-runtime',
+    title: 'pall runtime-verdi',
+    code: `innsjekk
+
+infodesk pall
+infodesk pall
+
+søndag`,
+  },
+  {
     id: 'vikingskip-canvas',
     title: 'Vikingskip canvas',
     code: `vikingskip

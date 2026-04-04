@@ -171,6 +171,7 @@ export default function Home() {
           <ul>
             <li><strong>arne</strong> representerer 1. Flere arne i sekvens gir tilsvarende heltall.</li>
             <li><strong>rop</strong> er et uttrykk som konverterer arne-baserte verdier til bokstaver.</li>
+            <li><strong>pall</strong> gir en runtime-generert tallverdi der <strong>| 1</strong> brukes pa heltallsdelen, men desimaldelen beholdes.</li>
             <li><strong>rop</strong> støtter uttrykk og konkatenering med <strong>crew</strong>.</li>
             <li>Talltegn er ikke tillatt i kildekoden. Numeriske verdier må uttrykkes med arne-sekvenser.</li>
           </ul>
