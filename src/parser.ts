@@ -332,13 +332,11 @@ class Parser {
 
   private parseKreativaStatement(): KreativaStatement {
     this.expectWord('kreativia')
-    const eventType = this.parsePrimary()
-    const keyCode = this.parsePrimary()
-    const handler = this.parsePrimary()
+    const key = this.parseExpression()
+    const handler = this.parseExpression()
     return {
       type: 'KreativaStatement',
-      eventType,
-      keyCode,
+      key,
       handler,
     }
   }

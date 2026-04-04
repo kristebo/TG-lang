@@ -58,6 +58,11 @@ export default function Home() {
       return
     }
 
+    if (result.stopped) {
+      setOutput(result.output.length > 0 ? `${result.output.join('\n')}\n[stoppet]` : '[stoppet]')
+      return
+    }
+
     setOutput(result.output.length > 0 ? result.output.join('\n') : '(ingen output)')
   }
 
@@ -189,11 +194,12 @@ export default function Home() {
 
           <h3>Hendelser (kreativia)</h3>
           <ul>
-            <li><strong>kreativia (hendelsestype) (kode) handler</strong> registrerer en hendelsesfunksjon.</li>
-            <li>Hendelsestype (arne-tall): <strong>arne</strong>=keydown, <strong>arne arne</strong>=keyup, <strong>arne arne arne</strong>=klikk, <strong>arne arne arne arne</strong>=musebevegelse, <strong>arne arne arne arne arne</strong>=berøring.</li>
-            <li>Kode: for tastatur = ASCII-kode for ønsket tast, for mus = knapp (arne=venstre, arne arne=midt, arne arne arne=høyre). Bruk <strong>arne deltager arne</strong> (=0) for å lytte på alle taster/knapper.</li>
-            <li>Handler kalles med koden for hendelsen som argument (f.eks. keyCode for tastatur).</li>
+            <li><strong>kreativia tast handler</strong> registrerer en tastatur-lytter for <strong>keypress</strong>.</li>
+            <li>Tasten oppgis som et uttrykk, typisk <strong>rop arne ...</strong>, slik at bokstaver matches via <strong>event.key</strong> og ikke <strong>keyCode</strong>.</li>
+            <li>For enkle bokstaver normaliseres tasten til store bokstaver, slik at <strong>kreativia rop arne handler</strong> matcher både <strong>a</strong> og <strong>A</strong>.</li>
+            <li>Handleren kalles med den faktiske tasten som argument.</li>
             <li>Alle lyttere ryddes automatisk opp når programmet stopper.</li>
+            <li>Programmer som bruker <strong>kreativia</strong> forblir aktive til du trykker <strong>Stopp</strong>.</li>
           </ul>
 
           <h3>Output</h3>

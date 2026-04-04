@@ -8,6 +8,7 @@ export interface RunResult {
   javascript: string
   ast?: Program
   error?: string
+  stopped?: boolean
 }
 
 export interface RunOptions {
@@ -20,6 +21,11 @@ interface ActiveRun {
   id: number
   aborted: boolean
   cleanups: Array<() => void>
+  keepAlive: {
+    promise: Promise<void>
+    resolve: () => void
+  } | null
+  failure: Error | null
 }
 
 class TGStopError extends Error {
@@ -63,6 +69,28 @@ const TG_CHANNEL_MAX = 15
 
 const isRunActive = (run: ActiveRun): boolean => activeRun?.id === run.id && !run.aborted
 
+const createKeepAlive = (run: ActiveRun): Promise<void> => {
+  if (!run.keepAlive) {
+    let resolve = () => {
+      // replaced in executor
+    }
+    const promise = new Promise<void>((complete) => {
+      resolve = complete
+    })
+    run.keepAlive = { promise, resolve }
+  }
+
+  return run.keepAlive.promise
+}
+
+const releaseKeepAlive = (run: ActiveRun): void => {
+  run.keepAlive?.resolve()
+}
+
+const normalizeKeyboardKeyForMatch = (key: string): string => (key.length === 1 ? key.toUpperCase() : key.toLowerCase())
+
+const formatKeyboardKey = (key: string): string => (key.length === 1 ? key.toUpperCase() : key)
+
 const ensureRunActive = (run: ActiveRun): void => {
   if (!isRunActive(run)) {
     throw new TGStopError()
@@ -98,6 +126,7 @@ export function stopTG(): { success: boolean; error?: string } {
   }
 
   activeRun.aborted = true
+  releaseKeepAlive(activeRun)
   return { success: true }
 }
 
@@ -108,6 +137,8 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
     id: ++runCounter,
     aborted: false,
     cleanups: [],
+    keepAlive: null,
+    failure: null,
   }
   activeRun = run
 
@@ -135,49 +166,47 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
           Math.min(TG_CHANNEL_MAX, Math.max(0, Math.floor(b))),
         )
       },
-      kreativia: async (rawEventType: unknown, rawKeyCode: unknown, handler: unknown) => {
+      kreativia: async (rawKey: unknown, handler: unknown) => {
         ensureRunActive(run)
         if (typeof document === 'undefined') return
 
-        const eventType = Math.floor(Number(rawEventType))
-        const keyCode = Math.floor(Number(rawKeyCode))
-
-        const EVENT_NAMES: Record<number, string> = {
-          1: 'keydown',
-          2: 'keyup',
-          3: 'click',
-          4: 'mousemove',
-          5: 'touchstart',
+        if (typeof handler !== 'function') {
+          throw new Error('kreativia forventer en funksjon som handler.')
         }
-        const eventName = EVENT_NAMES[eventType] ?? 'keydown'
+
+        const expectedKey = formatKeyboardKey(stringifyValue(rawKey))
+        const expectedMatchKey = normalizeKeyboardKeyForMatch(expectedKey)
+        createKeepAlive(run)
 
         const listener = async (e: Event) => {
           if (!isRunActive(run)) {
-            document.removeEventListener(eventName, listener as EventListener)
+            document.removeEventListener('keypress', listener as EventListener)
             return
           }
 
-          let eventCode = 0
-          if (e instanceof KeyboardEvent) {
-            eventCode = e.keyCode
-            if (keyCode > 0 && eventCode !== keyCode) return
-          } else if (e instanceof MouseEvent) {
-            eventCode = e.button + 1
-            if (keyCode > 0 && eventCode !== keyCode) return
+          if (!(e instanceof KeyboardEvent)) {
+            return
           }
+
+          const actualKey = formatKeyboardKey(e.key)
+          if (normalizeKeyboardKeyForMatch(actualKey) !== expectedMatchKey) return
 
           try {
             ensureRunActive(run)
-            if (typeof handler === 'function') {
-              await (handler as (...args: unknown[]) => Promise<unknown>)(eventCode)
+            await (handler as (...args: unknown[]) => Promise<unknown>)(actualKey)
+          } catch (error) {
+            if (error instanceof TGStopError) {
+              return
             }
-          } catch {
-            // Silently absorb stop errors fired from event handlers
+
+            run.failure = error instanceof Error ? error : new Error('Ukjent feil i kreativia-handler.')
+            run.aborted = true
+            releaseKeepAlive(run)
           }
         }
 
-        document.addEventListener(eventName, listener as EventListener)
-        run.cleanups.push(() => document.removeEventListener(eventName, listener as EventListener))
+        document.addEventListener('keypress', listener as EventListener)
+        run.cleanups.push(() => document.removeEventListener('keypress', listener as EventListener))
       },
     }
 
@@ -193,12 +222,29 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
     const execute = new AsyncFunction('console', '__tg', `"use strict";\n${javascript}`)
     await execute(sandboxConsole, tgRuntime)
 
+    if (run.keepAlive && isRunActive(run)) {
+      await run.keepAlive.promise
+    }
+
+    if (run.failure) {
+      throw run.failure
+    }
+
     return {
       output,
       javascript,
       ast,
+      stopped: run.aborted,
     }
   } catch (error) {
+    if (error instanceof TGStopError) {
+      return {
+        output,
+        javascript,
+        stopped: true,
+      }
+    }
+
     return {
       output,
       javascript,

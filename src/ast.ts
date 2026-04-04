@@ -163,7 +163,6 @@ export interface CallExpression {
 
 export interface KreativaStatement {
   type: 'KreativaStatement'
-  eventType: Expression
-  keyCode: Expression
+  key: Expression
   handler: Expression
 }

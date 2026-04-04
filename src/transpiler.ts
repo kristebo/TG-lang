@@ -126,7 +126,7 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
     case 'KreativaStatement':
       return [
         guard,
-        `${pad}await __tg.kreativia(${transpileExpression(statement.eventType, context)}, ${transpileExpression(statement.keyCode, context)}, ${transpileExpression(statement.handler, context)});`,
+        `${pad}await __tg.kreativia(${transpileExpression(statement.key, context)}, ${transpileExpression(statement.handler, context)});`,
       ]
   }
 }

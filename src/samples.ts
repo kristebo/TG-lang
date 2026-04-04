@@ -229,6 +229,252 @@ infodesk rop arne arne arne arne
 søndag`,
   },
   {
+    id: 'kreativia-keyboard',
+    title: 'Kreativia keyboard',
+    code: `innsjekk
+
+hylle tastetrykk(tast) => {
+  infodesk(tast)
+}
+
+kreativia rop arne tastetrykk
+
+søndag`,
+  },
+  {
+    id: 'vikingskip-wasd',
+    title: 'Vikingskip WASD',
+    code: `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+storrelse = arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+midt = arne arne arne arne arne arne arne arne
+posx = midt
+posy = midt
+en = arne
+
+hylle tegn() => {
+  onsdag storrelse deltager en
+  torsdag storrelse deltager en
+  fredag storrelse deltager en
+  piksel(posx, posy)
+}
+
+hylle vis() => {
+  tegn()
+}
+
+hylle venstre(tast) => {
+  secbua (posx maof en) {
+    piksel(posx, posy)
+    posx = posx deltager en
+  } ombud {
+  }
+  vis()
+}
+
+hylle hoyre(tast) => {
+  secbua (posx foam storrelse deltager en) {
+    piksel(posx, posy)
+    posx = posx crew en
+  } ombud {
+  }
+  vis()
+}
+
+hylle opp(tast) => {
+  secbua (posy maof en) {
+    piksel(posx, posy)
+    posy = posy deltager en
+  } ombud {
+  }
+  vis()
+}
+
+hylle ned(tast) => {
+  secbua (posy foam storrelse deltager en) {
+    piksel(posx, posy)
+    posy = posy crew en
+  } ombud {
+  }
+  vis()
+}
+
+vis()
+kreativia rop arne venstre
+kreativia rop arne arne arne arne hoyre
+kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne opp
+kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne ned
+
+søndag`,
+  },
+  {
+    id: 'vikingskip-snake',
+    title: 'Vikingskip snake',
+    code: `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+l = arne deltager arne
+en = arne
+to = arne arne
+tre = arne arne arne
+fire = arne arne arne arne
+fem = arne arne arne arne arne
+seks = arne arne arne arne arne arne
+syv = arne arne arne arne arne arne arne
+atte = arne arne arne arne arne arne arne arne
+seksten = arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+femten = seksten deltager en
+maks = seksten kandu seksten
+fart = en medic fire
+
+slangelengde = tre
+dirx = en
+diry = l
+slangex = seating maks
+slangey = seating maks
+
+slangex noc l = atte
+slangey noc l = atte
+slangex noc en = syv
+slangey noc en = atte
+slangex noc to = seks
+slangey noc to = atte
+
+applex = fire
+appley = to
+
+hylle wrap(verdi) => {
+  secbua (verdi maof l) {
+    tech femten
+  } ombud {
+    secbua (verdi foam seksten) {
+      tech verdi
+    } ombud {
+      tech l
+    }
+  }
+}
+
+hylle tegnhvit(x y) => {
+  onsdag femten
+  torsdag femten
+  fredag femten
+  piksel(x, y)
+}
+
+hylle tegnsvart(x y) => {
+  piksel(x, y)
+}
+
+hylle tegnslange(i) => {
+  secbua (i foam slangelengde) {
+    tegnhvit(slangex noc (i crew en), slangey noc (i crew en))
+    tegnslange(i crew en)
+  } ombud {
+  }
+}
+
+hylle tegneple() => {
+  fredag seksten
+  piksel(applex, appley)
+}
+
+hylle startverden() => {
+  tegnslange(l)
+  tegneple()
+}
+
+hylle flyttkropp(i) => {
+  secbua (i maof l) {
+    slangex noc i = slangex noc i
+    slangey noc i = slangey noc i
+    flyttkropp(i deltager en)
+  } ombud {
+  }
+}
+
+hylle nytteple() => {
+  applex = (applex kandu fem crew tre) kandustyre seksten
+  appley = (appley kandu syv crew en) kandustyre seksten
+  tegneple()
+}
+
+hylle venstre(tast) => {
+  secbua (dirx kanalseks en) {
+  } ombud {
+    dirx = l deltager en
+    diry = l
+  }
+}
+
+hylle hoyre(tast) => {
+  secbua (dirx kanalseks (l deltager en)) {
+  } ombud {
+    dirx = en
+    diry = l
+  }
+}
+
+hylle opp(tast) => {
+  secbua (diry kanalseks en) {
+  } ombud {
+    dirx = l
+    diry = l deltager en
+  }
+}
+
+hylle ned(tast) => {
+  secbua (diry kanalseks (l deltager en)) {
+  } ombud {
+    dirx = l
+    diry = en
+  }
+}
+
+hylle tick() => {
+  halex = slangex noc slangelengde
+  haley = slangey noc slangelengde
+  nestex = wrap((slangex noc en) crew dirx)
+  nestey = wrap((slangey noc en) crew diry)
+  spiser = (nestex kanalseks applex) kandu (nestey kanalseks appley)
+
+  secbua (spiser) {
+  } ombud {
+    tegnsvart(halex, haley)
+  }
+
+  secbua (spiser) {
+    slangelengde = slangelengde crew en
+  } ombud {
+  }
+
+  flyttkropp(slangelengde deltager en)
+  slangex noc l = nestex
+  slangey noc l = nestey
+
+  secbua (spiser) {
+    nytteple()
+  } ombud {
+  }
+
+  tegnhvit(nestex, nestey)
+  sovetelt(fart) { }
+  tick()
+}
+
+startverden()
+kreativia rop arne venstre
+kreativia rop arne arne arne arne hoyre
+kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne ned
+kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne opp
+tick()
+
+søndag`,
+  },
+  {
     id: 'simple-branching',
     title: 'Enkel secbua/ombud branching',
     code: `innsjekk

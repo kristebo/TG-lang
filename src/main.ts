@@ -81,5 +81,10 @@ runButton.addEventListener('click', async () => {
     return
   }
 
+  if (result.stopped) {
+    output.textContent = result.output.length > 0 ? `${result.output.join('\n')}\n[stoppet]` : '[stoppet]'
+    return
+  }
+
   output.textContent = result.output.length > 0 ? result.output.join('\n') : '(ingen output)'
 })

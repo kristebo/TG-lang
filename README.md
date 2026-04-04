@@ -32,6 +32,7 @@ Web-based MVP of TG-lang with:
 - Return: `tech expr`
 - Sleep: `sovetelt(expr) { }`
 - Error: `attentiongrab(expr)`
+- Keyboard input: `kreativia rop arne handler` via `keypress`
 - Program framing: `innsjekk` ... `søndag`
 
 ## Included Examples
