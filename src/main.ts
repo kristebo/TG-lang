@@ -5,8 +5,8 @@ import { runTG, stopTG } from './runtime'
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 <main class="shell">
   <header class="hero">
-    <p class="kicker">TG-lang MVP</p>
-    <h1>TG-lang Lab</h1>
+    
+    <h1> <img src="/assets/image.png" alt="TG-lang logo" class="logo" /> TG-lang Lab</h1>
     <p class="subtitle">Skriv TG-lang, transpiler, og kjor direkte i nettleseren.</p>
     <p class="subtitle">Useless util TG26 av 1tb</p>
   </header>

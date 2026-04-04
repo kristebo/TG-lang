@@ -56,6 +56,18 @@ h1 {
   line-height: 1;
 }
 
+.hero-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-title .logo {
+  height: 1em;
+  width: auto;
+  display: block;
+}
+
 .subtitle {
   margin: 0;
   color: var(--muted);
