@@ -136,6 +136,8 @@ function transpileExpression(expression: Expression, context: TranspileContext):
       return `(${transpileExpression(expression.left, context)} ${expression.operator} ${transpileExpression(expression.right, context)})`
     case 'RopExpression':
       return transpileRop(expression.expression, context)
+    case 'LordagExpression':
+      return `(${transpileExpression(expression.expression, context)}).join('')`
     case 'PallExpression':
       return `__tg.pall()`
     case 'PiExpression':
@@ -180,5 +182,5 @@ function transpileRop(expression: Expression, context: TranspileContext): string
   if (expression.type === 'BinaryExpression' && expression.operator === '+') {
     return `(${transpileRop(expression.left, context)} + ${transpileRop(expression.right, context)})`
   }
-  return `(${transpileExpression(expression, context)}).join('')`
+  return `(${transpileExpression(expression, context)})`
 }

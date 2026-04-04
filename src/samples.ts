@@ -130,7 +130,7 @@ hjul nuc tre = kilde nuc tre
 hjul nuc fire = kilde nuc to
 hjul nuc fem = kilde nuc en
 
-infodesk(rop hjul)
+infodesk(lørdag hjul)
 
 søndag`,
   },

@@ -9,6 +9,7 @@ import type {
   FunctionDeclaration,
   InfodeskStatement,
   IndexedAssignmentStatement,
+  LordagExpression,
   NucExpression,
   NumberLiteral,
   PallExpression,
@@ -56,6 +57,7 @@ const RESERVED = new Set([
   'sovetelt',
   'attentiongrab',
   'pall',
+  'lørdag',
   'premiumparkering',
   'trafikklys',
   'expo',
@@ -431,6 +433,10 @@ class Parser {
       return this.parseSeatingExpression()
     }
 
+    if (this.isWord('lørdag')) {
+      return this.parseLordagExpression()
+    }
+
     if (this.isWord('rop')) {
       return this.parseRopExpression()
     }
@@ -512,6 +518,14 @@ class Parser {
     return {
       type: 'RopExpression',
       expression: this.parseAdditive(),
+    }
+  }
+
+  private parseLordagExpression(): LordagExpression {
+    this.expectWord('lørdag')
+    return {
+      type: 'LordagExpression',
+      expression: this.parsePrimary(),
     }
   }
 

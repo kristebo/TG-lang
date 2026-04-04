@@ -16,6 +16,7 @@ export type Expression =
   | Identifier
   | BinaryExpression
   | RopExpression
+  | LordagExpression
   | PallExpression
   | PiExpression
   | TrigExpression
@@ -119,6 +120,11 @@ export interface BinaryExpression {
 export interface RopExpression {
   type: 'RopExpression'
   /** The inner expression. crew (+) at the top level means string concat of chars. */
+  expression: Expression
+}
+
+export interface LordagExpression {
+  type: 'LordagExpression'
   expression: Expression
 }
 
