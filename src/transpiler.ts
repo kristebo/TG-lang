@@ -43,7 +43,7 @@ function transpileStatement(statement: Statement, context: TranspileContext): st
     }
     case 'IndexedAssignmentStatement': {
       const target = context.localBindings.has(statement.name) ? statement.name : `__tgVars.${statement.name}`
-      return [guard, `${pad}${target}[Math.floor(${transpileExpression(statement.index, context)})] = ${transpileExpression(statement.value, context)};`]
+      return [guard, `${pad}${target}[Math.floor(${transpileExpression(statement.index, context)} - 1)] = ${transpileExpression(statement.value, context)};`]
     }
     case 'InfodeskStatement':
       return [guard, `${pad}console.log(${transpileExpression(statement.expression, context)});`]
