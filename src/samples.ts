@@ -301,10 +301,10 @@ fire = arne arne arne arne
 kilde = rop arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne  arne arne arne arne arne arne crew rop arne arne arne arne arne
 hjul = seating fire
 
-hjul noc arne deltager arne = kilde noc fire
-hjul noc en = kilde noc tre
-hjul noc to = kilde noc to
-hjul noc tre = kilde noc en
+hjul noc en = kilde noc fire
+hjul noc to = kilde noc tre
+hjul noc tre = kilde noc to
+hjul noc fire = kilde noc en
 
 infodesk kilde
 infodesk lørdag hjul
@@ -326,19 +326,19 @@ seks = tre kandu to
 ni = tre kandu tre
 
 tall = seating seks
-tall noc l = fem
-tall noc en = seks
-tall noc to = to
-tall noc tre = ni
-tall noc fire = tre
-tall noc fem = l
+tall noc en = fem
+tall noc to = seks
+tall noc tre = to
+tall noc fire = ni
+tall noc fem = tre
+tall noc seks = l
 
 infodesk(lørdag tall)
 
 hylle bytt(arr i j) => {
   temp = arr noc (i crew en)
-  arr noc i = arr noc (j crew en)
-  arr noc j = temp
+  arr noc (i crew en) = arr noc (j crew en)
+  arr noc (j crew en) = temp
   infodesk(lørdag arr)
 }
 
@@ -366,7 +366,6 @@ hylle bobleytre(arr grense) => {
 }
 
 bobleytre(tall, seks deltager en)
-infodesk(lørdag tall)
 
 søndag`,
   },
