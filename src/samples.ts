@@ -22,7 +22,7 @@ infodesk rop arne arne arne
 søndag`,
   },
   {
-    id: 'arne-rop',
+    id: 'arne',
     title: 'ARNE',
     code: `innsjekk
 infodesk(rop arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne  arne arne arne arne arne arne crew rop arne arne arne arne arne)
@@ -51,7 +51,7 @@ infodesk rop arne arne arne arne
 søndag`,
   },
   {
-    id: 'simple-branching',
+    id: 'secbua-ombud',
     title: 'Secbua/Ombud (if-else)',
     code: `innsjekk
 
@@ -61,7 +61,7 @@ b = arne arne
 secbua (a kanalseks b) {
   infodesk(rop arne arne arne arne)
 } ombud {
-  infodesk(rop arne arne arne arne arne)
+  attentiongrab(rop arne arne arne arne arne)
 }
 
 søndag`,
@@ -95,7 +95,7 @@ arnebanan(arne)
 søndag`
   },
   {
-    id: 'pall-runtime',
+    id: 'pall',
     title: 'Pall (tilfeldige tall)',
     code: `innsjekk
 
@@ -110,7 +110,7 @@ infodesk tilfeldigArne(arne, arne arne arne arne)
 søndag`,
   },
   {
-    id: 'vikingskip-canvas',
+    id: 'canvas',
     title: 'Vikingskip+Hovedscene (canvas)',
     code: `vikingskip
 innsjekk
@@ -132,7 +132,7 @@ piksel(arne arne arne arne, arne arne arne arne)
 søndag`,
   },
   {
-    id: 'vikingskip-fargetegning',
+    id: 'fargetegning',
     title: 'Vikingskip Div. Farger',
     code: `vikingskip
 innsjekk
@@ -166,7 +166,7 @@ piksel(arne arne arne arne, arne arne arne)
 søndag`,
   },
   {
-    id: 'vikingskip-tg-logo',
+    id: 'tg-logo',
     title: 'Vikingskip TG-Logo',
     code: `vikingskip
 innsjekk
@@ -246,7 +246,7 @@ g(arneMasse, arneHalv crew arneLitt crew arne)
 søndag`
   },
   {
-    id: 'vikingskip-trig-sirkel',
+    id: 'trig-sirkel',
     title: 'Vikingskip Trig-sirkel',
     code: `vikingskip
 innsjekk
@@ -289,7 +289,7 @@ tegn(l, tjuefire)
 søndag`,
   },
   {
-    id: 'noc-seating-teksthjul',
+    id: 'noc-seating',
     title: 'Noc + Seating Teksthjul',
     code: `innsjekk
 
@@ -312,7 +312,7 @@ infodesk lørdag hjul
 søndag`,
   },
   {
-    id: 'bubble-sort-562930',
+    id: 'bubble-sort',
     title: 'Bubble Sort (viser steg)',
     code: `innsjekk
 
@@ -383,7 +383,7 @@ kreativia rop arne tastetrykk
 søndag`,
   },
   {
-    id: 'vikingskip-wasd',
+    id: 'wasd',
     title: 'WASD Piksel',
     code: `vikingskip
 innsjekk
@@ -451,12 +451,12 @@ kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne a
 søndag`,
   },
   {
-    id: 'vikingskip-snake',
+    id: 'snake',
     title: 'Snake I Vikingskip',
     code: `vikingskip
 innsjekk
-hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
-arneMapSize = arne arne arne arne kandu arne arne arne arne
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne
+arneMapSize = arne arne arne arne kandu arne arne arne
 arneMaksFarge = arne arne arne arne kandu arne arne arne arne
 
 arneMap = seating arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
@@ -832,7 +832,7 @@ render(hoyde, ymin)
 søndag`
   },
   {
-    "id": "Mandelbrot-vikingskip",
+    "id": "mandelbrot-vikingskip",
     "title": "Mandelbrot (vikingskip)",
     "code": `vikingskip
 innsjekk
@@ -923,7 +923,7 @@ render(l, l, ymin)
 søndag`
   },
   {
-    "id": "Julia-sett vikingskip",
+    "id": "julia-set",
     "title": "Julia-sett (vikingskip)",
     "code": `vikingskip
 innsjekk
@@ -1015,7 +1015,7 @@ render(l, l, ymin)
 søndag`
   },
   {
-    id: 'small-html',
+    id: 'smallhtml',
     title: "SmallHTML (TG26, 967 bytes)",
     code: `vikingskip
 innsjekk

@@ -21,6 +21,17 @@ export default function Home() {
     ? (canvasResolution ?? DEFAULT_CANVAS_RESOLUTION)
     : null
 
+  useEffect(() => {
+    const search = new URLSearchParams(window.location.search).get('example');
+    if (search) {
+      const example = EXAMPLES.find(i => i.id === search);
+      if (example) {
+        setExampleId(example.id);
+        setSource(example.code);
+      }
+    }
+  }, []);
+
   const selected = useMemo(
     () => EXAMPLES.find((item) => item.id === exampleId) ?? EXAMPLES[0],
     [exampleId],
