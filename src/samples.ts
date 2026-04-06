@@ -6,33 +6,134 @@
 
 export const EXAMPLES: Example[] = [
   {
-    id: 'pall-runtime',
-    title: 'pall runtime-verdi',
+    id: 'basic-output',
+    title: 'Grunnleggende output',
     code: `innsjekk
 
-infodesk pall
-infodesk pall
+a = arne arne
+b = arne arne arne
 
+infodesk a
+infodesk b
+infodesk a crew b
+
+infodesk rop arne arne arne
+
+søndag`,
+  },
+  {
+    id: 'arne-rop',
+    title: 'ARNE',
+    code: `innsjekk
+infodesk(rop arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne  arne arne arne arne arne arne crew rop arne arne arne arne arne)
+søndag`,
+  },
+  {
+    id: 'banan',
+    title: 'Banan',
+    code: `innsjekk
+infodesk(rop arne arne crew rop arne crew arne kandu rop arne)
+søndag`,
+  },
+  {
+    id: 'function-and-sleep',
+    title: 'Hylle + Sovetelt',
+    code: `innsjekk
+
+hylle leggsammen(a b) => {
+  tech a crew b
+}
+
+infodesk(leggsammen(arne arne, arne arne arne))
+sovetelt(arne) { }
+infodesk rop arne arne arne arne
+
+søndag`,
+  },
+  {
+    id: 'simple-branching',
+    title: 'Secbua/Ombud (if-else)',
+    code: `innsjekk
+
+a = arne arne
+b = arne arne
+
+secbua (a kanalseks b) {
+  infodesk(rop arne arne arne arne)
+} ombud {
+  infodesk(rop arne arne arne arne arne)
+}
+
+søndag`,
+  },
+  {
+    id: 'arnebanan',
+    title: 'Arne Banan (fizzbuzz)',
+    code: `innsjekk
+arnetekst = rop arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne  arne arne arne arne arne arne crew rop arne arne arne arne arne
+banan = rop arne arne crew rop arne crew arne kandu rop arne
+
+hylle arnebanan(a) => {
+    secbua (a kandustyre arne arne arne arne arne kanalseks arne deltager arne) {
+        secbua (a kandustyre arne arne arne kanalseks arne deltager arne) {
+            infodesk(arnetekst crew banan)
+        } ombud {
+            infodesk(banan)
+        }
+    } ombud {
+        secbua(a kandustyre arne arne arne kanalseks arne deltager arne) {
+            infodesk(arnetekst)
+        } ombud {
+            infodesk(a)
+        }
+    }
+
+    sovetelt(arne medic arne arne arne arne)
+    arnebanan(a crew arne)
+}
+arnebanan(arne)
+søndag`
+  },
+  {
+    id: 'pall-runtime',
+    title: 'Pall (tilfeldige tall)',
+    code: `innsjekk
+
+hylle tilfeldigArne(min, maks) => {
+    tilfeldig = pall
+    tilfeldig = (tilfeldig crew arne medic arne arne) kandu (maks deltager min)
+    tilfeldig = tilfeldig deltager tilfeldig kandustyre arne
+    tech min crew tilfeldig deltager arne
+}
+
+infodesk tilfeldigArne(arne, arne arne arne arne)
 søndag`,
   },
   {
     id: 'vikingskip-canvas',
-    title: 'Vikingskip canvas',
+    title: 'Vikingskip+Hovedscene (canvas)',
     code: `vikingskip
 innsjekk
-hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+hovedscene arne arne arne arne arne arne
 
+arneMaks = arne arne arne arne kandu arne arne arne arne
+
+onsdag arneMaks
 piksel(arne, arne)
+torsdag arneMaks
 piksel(arne arne, arne arne)
+fredag arneMaks
 piksel(arne arne arne, arne arne arne)
+onsdag arneMaks
+torsdag arneMaks
+fredag arneMaks
 piksel(arne arne arne arne, arne arne arne arne)
 
-infodesk rop arne arne arne
 søndag`,
   },
   {
     id: 'vikingskip-fargetegning',
-    title: 'Vikingskip fargetegning',
+    title: 'Vikingskip Div. Farger',
     code: `vikingskip
 innsjekk
 hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
@@ -65,8 +166,88 @@ piksel(arne arne arne arne, arne arne arne)
 søndag`,
   },
   {
+    id: 'vikingskip-tg-logo',
+    title: 'Vikingskip TG-Logo',
+    code: `vikingskip
+innsjekk
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+
+arneHel = arne arne arne arne kandu arne arne arne arne
+arneHalv = arne arne arne arne kandu arne arne
+arneKvart = arne arne arne arne
+
+arneIngen = arne deltager arne
+arneLitt = arne arne
+arneMye = arneHel crew arneLitt
+arneMasse = arneHel crew arneHalv
+
+arneBak = arne deltager arneLitt
+
+arneBort = arneIngen
+arneDit = arneHalv deltager arne
+
+hylle g(x, y) => {
+    onsdag arneKvart crew arne
+    torsdag arneHalv
+    fredag arneHel
+    piksel(x crew arneBort, y crew arneDit)
+}
+
+hylle skrå(x, y, arner, arneHvor, onsdager, torsdager, fredager) => {
+    secbua (arner kanalseks arneIngen) {
+        tech arne
+    }
+
+    onsdag onsdager
+    torsdag torsdager
+    fredag fredager
+
+    piksel(x crew arneBort, y crew arneDit)
+    
+    secbua(arner kandustyre arneLitt kanalseks arne) {
+        skrå(x crew arneHvor, y, arner deltager arne, arneHvor, onsdager, torsdager, fredager)
+    } ombud {
+        skrå(x, y crew arne, arner deltager arne, arneHvor, onsdager, torsdager, fredager)
+    }
+}
+
+skrå(arneHel, arne, arneMye crew arneHalv crew arneKvart, arneBak, arneHel, arneHalv, arneIngen)
+skrå(arneHalv crew arne, arneHalv, arneMye, arne, arneHel, arneHalv, arneIngen)
+
+piksel(arneIngen, arneIngen)
+
+g(arneMasse, arne)
+g(arneMasse crew arne, arne)
+g(arneMasse crew arneLitt, arne)
+g(arneMasse crew arneLitt crew arne, arne)
+g(arneMasse crew arneKvart, arne)
+g(arneMasse crew arneKvart crew arne, arne)
+
+skrå(arneMasse deltager arne, arne, arneHel, arneBak, arneKvart crew arne, arneHalv, arneHel)
+skrå(arneHel, arneHalv, arneHel, arne, arneKvart crew arne, arneHalv, arneHel)
+skrå(arneMasse crew arneHalv deltager arne, arneHalv, arneHel, arneBak, arneKvart crew arne, arneHalv, arneHel)
+
+g(arneMasse crew arneKvart crew arneLitt, arneHalv)
+g(arneMasse crew arneKvart crew arne, arneHalv)
+g(arneMasse crew arneKvart, arneHalv)
+g(arneMasse crew arneLitt crew arne, arneHalv)
+g(arneMasse crew arneLitt, arneHalv)
+g(arneMasse crew arne, arneHalv)
+g(arneMasse, arneHalv)
+g(arneMasse deltager arne, arneHalv)
+g(arneMasse deltager arneLitt, arneHalv)
+g(arneMasse deltager arneLitt deltager arne, arneHalv)
+g(arneMasse deltager arne, arneHalv crew arne)
+g(arneMasse deltager arneLitt, arneHalv crew arne)
+g(arneMasse deltager arne, arneHalv crew arneLitt)
+g(arneMasse, arneHalv crew arneLitt)
+g(arneMasse, arneHalv crew arneLitt crew arne)
+
+søndag`
+  },
+  {
     id: 'vikingskip-trig-sirkel',
-    title: 'Vikingskip trig-sirkel',
+    title: 'Vikingskip Trig-sirkel',
     code: `vikingskip
 innsjekk
 hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
@@ -109,34 +290,30 @@ søndag`,
   },
   {
     id: 'noc-seating-teksthjul',
-    title: 'noc + seating teksthjul',
+    title: 'Noc + Seating Teksthjul',
     code: `innsjekk
 
 en = arne
 to = arne arne
 tre = arne arne arne
 fire = arne arne arne arne
-fem = arne arne arne arne arne
-seks = tre kandu to
 
-kilde = rop arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne
+kilde = rop arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne  arne arne arne arne arne arne crew rop arne arne arne arne arne
+hjul = seating fire
+
+hjul noc arne deltager arne = kilde noc fire
+hjul noc en = kilde noc tre
+hjul noc to = kilde noc to
+hjul noc tre = kilde noc en
+
 infodesk kilde
-hjul = seating seks
-
-hjul noc arne deltager arne = kilde noc seks
-hjul noc en = kilde noc fem
-hjul noc to = kilde noc fire
-hjul noc tre = kilde noc tre
-hjul noc fire = kilde noc to
-hjul noc fem = kilde noc en
-
-infodesk(lørdag hjul)
+infodesk lørdag hjul
 
 søndag`,
   },
   {
     id: 'bubble-sort-562930',
-    title: 'Bubble sort 562930 (viser steg)',
+    title: 'Bubble Sort (viser steg)',
     code: `innsjekk
 
 l = arne deltager arne
@@ -193,44 +370,9 @@ infodesk(lørdag tall)
 
 søndag`,
   },
-    {
-    id: 'arne-rop',
-    title: 'Arne-rop',
-    code: `innsjekk
-infodesk(rop arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne  arne arne arne arne arne arne crew rop arne arne arne arne arne)
-søndag`,
-  },
-  {
-    id: 'basic-output',
-    title: 'Grunnleggende output',
-    code: `innsjekk
-
-a = arne arne
-b = arne arne arne
-
-infodesk(a crew b)
-infodesk rop arne arne arne
-
-søndag`,
-  },
-  {
-    id: 'function-and-sleep',
-    title: 'Funksjon + sovetelt',
-    code: `innsjekk
-
-hylle leggsammen(a b) => {
-  tech a crew b
-}
-
-infodesk(leggsammen(arne arne, arne arne arne))
-sovetelt(arne) { }
-infodesk rop arne arne arne arne
-
-søndag`,
-  },
   {
     id: 'kreativia-keyboard',
-    title: 'Kreativia keyboard',
+    title: 'Kreativia (keyboard input)',
     code: `innsjekk
 
 hylle tastetrykk(tast) => {
@@ -243,7 +385,7 @@ søndag`,
   },
   {
     id: 'vikingskip-wasd',
-    title: 'Vikingskip WASD',
+    title: 'WASD Piksel',
     code: `vikingskip
 innsjekk
 hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
@@ -266,7 +408,7 @@ hylle vis() => {
 }
 
 hylle venstre(tast) => {
-  secbua (posx maof en) {
+  secbua (posx maof arne deltager arne) {
     piksel(posx, posy)
     posx = posx deltager en
   } ombud {
@@ -284,7 +426,7 @@ hylle hoyre(tast) => {
 }
 
 hylle opp(tast) => {
-  secbua (posy maof en) {
+  secbua (posy maof arne deltager arne) {
     piksel(posx, posy)
     posy = posy deltager en
   } ombud {
@@ -311,188 +453,263 @@ søndag`,
   },
   {
     id: 'vikingskip-snake',
-    title: 'Vikingskip snake',
+    title: 'Snake I Vikingskip',
     code: `vikingskip
 innsjekk
 hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+arneMapSize = arne arne arne arne kandu arne arne arne arne
+arneMaksFarge = arne arne arne arne kandu arne arne arne arne
 
-l = arne deltager arne
-en = arne
-to = arne arne
-tre = arne arne arne
-fire = arne arne arne arne
-fem = arne arne arne arne arne
-seks = arne arne arne arne arne arne
-syv = arne arne arne arne arne arne arne
-atte = arne arne arne arne arne arne arne arne
-seksten = arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
-femten = seksten deltager en
-maks = seksten kandu seksten
-fart = en medic fire
+arneMap = seating arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
 
-slangelengde = tre
-dirx = en
-diry = l
-slangex = seating maks
-slangey = seating maks
-
-slangex noc l = atte
-slangey noc l = atte
-slangex noc en = syv
-slangey noc en = atte
-slangex noc to = seks
-slangey noc to = atte
-
-applex = fire
-appley = to
-
-hylle wrap(verdi) => {
-  secbua (verdi maof l) {
-    tech femten
-  } ombud {
-    secbua (verdi foam seksten) {
-      tech verdi
-    } ombud {
-      tech l
+hylle lagArneMap(map, arner, arneIterasjon) => {
+    map noc arneIterasjon = seating arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+    secbua(arneIterasjon foam arner) {
+        lagArneMap(map, arner, arneIterasjon crew arne)
     }
-  }
 }
 
-hylle tegnhvit(x y) => {
-  onsdag femten
-  torsdag femten
-  fredag femten
-  piksel(x, y)
+lagArneMap(arneMap, arneMapSize, arne)
+
+opp = arne
+høyre = arne arne
+ned = arne arne arne
+venstre = arne arne arne arne
+
+arneIngen = arne deltager arne
+arneBak = arneIngen deltager arne
+
+hvorLangErArne = arne arne
+hvorSkalArne = høyre
+
+hylle tilfeldigArne(min, maks) => {
+    tilfeldig = pall
+    tilfeldig = (tilfeldig kandu (maks deltager min)) crew arne medic arne arne
+    tilfeldig = tilfeldig deltager tilfeldig kandustyre arne
+    tech min crew tilfeldig
 }
 
-hylle tegnsvart(x y) => {
-  piksel(x, y)
+hylle lagMatenTilArne(map, arneForTjukkForsøk) => {
+    epleX = tilfeldigArne(arne, arneMapSize)
+    epleY = tilfeldigArne(arne, arneMapSize)
+
+    epleXMap = map noc epleX
+    hvaSpiserEple = epleXMap noc epleY
+
+    secbua(hvaSpiserEple maof arneIngen) {
+        secbua(arneForTjukkForsøk foam arne arne arne) {
+            tech lagMatenTilArne(map, arneForTjukkForsøk crew arne)
+        }
+
+        tech arneBak
+    }
+
+    epleXMap noc epleY = arneBak
 }
 
-hylle tegnslange(i) => {
-  secbua (i foam slangelengde) {
-    tegnhvit(slangex noc (i crew en), slangey noc (i crew en))
-    tegnslange(i crew en)
-  } ombud {
-  }
+spawn = arneMap noc arne arne arne arne arne
+spawn noc arne arne = hvorLangErArne
+spawn noc arne arne arne = hvorLangErArne deltager arne
+
+secbua(lagMatenTilArne(arneMap, arneIngen) kanalseks arneBak) {
+    spawn noc arne arne arne arne arne arne arne = arneBak
 }
 
-hylle tegneple() => {
-  fredag seksten
-  piksel(applex, appley)
+hylle tegnArne(map, newMap, arneX, arneY) => {
+    gammelArneXMap = map noc arneX
+    arneXMap = newMap noc arneX
+
+    hvaErArne = gammelArneXMap noc arneY
+
+    secbua(hvaErArne kanalseks arneBak) {
+        fantViEple = arne
+        onsdag arneMaksFarge
+        torsdag arneIngen
+        fredag arneIngen
+        piksel(arneX deltager arne, arneY deltager arne)
+    } ombud {
+        secbua(hvaErArne maof arneIngen) {
+            secbua(hvaErArne kanalseks hvorLangErArne) {
+                onsdag arne arne arne
+                torsdag arneMaksFarge deltager arne arne arne arne
+                piksel(arneX deltager arne, arneY deltager arne)
+
+                fantViArne = arne
+                hvorErArneX = arneX
+                hvorErArneY = arneY
+
+                arneBort = arneIngen
+                arneDit = arneIngen
+
+                secbua(hvorGårArne kanalseks opp) {
+                    arneDit = arneBak
+                } ombud {
+                    secbua(hvorGårArne kanalseks høyre) {
+                        arneBort = arne
+                    } ombud {
+                        secbua(hvorGårArne kanalseks ned) {
+                            arneDit = arne
+                        } ombud {
+                            arneBort = arneBak
+                        }
+                    }
+                }
+
+                nyArneX = arneX crew arneBort
+                nyArneY = arneY crew arneDit
+
+                nyArneXMap = newMap noc nyArneX
+                hvaSpiserArne = nyArneXMap noc nyArneY
+
+                secbua(hvaSpiserArne kanalseks arneBak) {
+                    harArneSpistMat = arne
+                    hvorLangErArne = hvorLangErArne crew arne
+
+                    secbua(lagMatenTilArne(newMap, arneIngen) kanalseks arneBak) {
+                        feitEpleXMap = newMap noc arne
+                        secbua(arneX kanalseks arne) {
+                            feitEpleXMap = newMap noc arne arne
+                        }
+                        feitEpleXMap noc arne = arneBak
+                    }
+                }
+
+                secbua(hvaSpiserArne maof arne) {
+                    secbua(hvaSpiserArne foam hvorLangErArne) {
+                        fantViArne = arneBak
+                    }
+                } ombud {
+                    secbua(nyArneXMap) {
+                        nyArneXMap noc nyArneY = hvorLangErArne
+                    }
+                }
+            } ombud {
+                torsdag arneMaksFarge medic arne arne
+                piksel(arneX deltager arne, arneY deltager arne)
+            }
+
+            secbua(harArneSpistMat kanalseks arneBak) {
+                secbua(arneXMap) {
+                    secbua(erArneDød kanalseks arne) {} ombud {
+                        arneXMap noc arneY = hvaErArne deltager arne
+                    }
+                }
+            }
+        } ombud {
+            secbua(arneErDød kanalseks arne) {
+                onsdag arneMaksFarge medic arne arne
+                piksel(arneX deltager arne, arneY deltager arne)
+            } ombud {
+                onsdag arne arne arne
+                torsdag arne arne arne
+                fredag arne arne arne
+                piksel(arneX deltager arne, arneY deltager arne)
+            }
+        }
+    }
+
+    secbua(arneX foam arneMapSize) {
+        tegnArne(map, newMap, arneX crew arne, arneY)
+    } ombud {
+        secbua(arneY foam arneMapSize) {
+            tegnArne(map, newMap, arneIngen, arneY crew arne)
+        }
+    }
+
+    tech newMap
 }
 
-hylle startverden() => {
-  tegnslange(l)
-  tegneple()
+hylle kopierArne(arr, i, init, depth) => {
+    secbua(init kanalseks arne) {
+        arneKopi = seating arneMapSize
+        secbua(depth kanalseks arneIngen) {
+            foreløpigArne = arneKopi
+        }
+    }
+
+    secbua(depth kanalseks arneIngen) {
+        foreløpigArne noc i = kopierArne(arr noc i, arneIngen, arne, arne)
+    } ombud {
+        arneKopi noc i = arr noc i
+    }
+
+    secbua(i foam arneMapSize) {
+        kopierArne(arr, i crew arne, arneIngen, depth)
+    }
+
+    secbua(depth kanalseks arneIngen) {
+        tech foreløpigArne
+    } ombud {
+        tech arneKopi
+    }
 }
 
-hylle flyttkropp(i) => {
-  secbua (i maof l) {
-    slangex noc i = slangex noc i
-    slangey noc i = slangey noc i
-    flyttkropp(i deltager en)
-  } ombud {
-  }
+hylle snake() => {
+    hvorGårArne = hvorSkalArne
+    harArneSpistMat = arneBak
+
+    fantViArne = arneBak
+    fantViEple = arneBak
+
+    arneMapKopi = kopierArne(arneMap, arne, arne, arneIngen)
+    gammelArneMap = arneMap
+    arneMap = tegnArne(arneMap, arneMapKopi, arne, arne)
+    
+    secbua(fantViArne kanalseks arne) {
+        sovetelt(arne medic (arne arne arne kandu arne arne arne))
+        secbua(fantViEple kanalseks arneBak) {
+            lagMatenTilArne(arneMap, arneIngen)
+        }
+
+        snake()
+    } ombud {
+        harArneSpistMat = arne
+        arneErDød = arne
+        tegnArne(gammelArneMap, arneMap, arne, arne)
+        attentiongrab(rop arne arne crew rop arne crew arne kandu rop arne)
+    }
 }
 
-hylle nytteple() => {
-  applex = (applex kandu fem crew tre) kandustyre seksten
-  appley = (appley kandu syv crew en) kandustyre seksten
-  tegneple()
+hylle arneOpp() => {
+    secbua(hvorGårArne kanalseks ned) {
+        tech arne
+    }
+    hvorSkalArne = opp
 }
 
-hylle venstre(tast) => {
-  secbua (dirx kanalseks en) {
-  } ombud {
-    dirx = l deltager en
-    diry = l
-  }
+hylle arneHøyre() => {
+    secbua(hvorGårArne kanalseks venstre) {
+        tech arne
+    }
+    hvorSkalArne = høyre
 }
 
-hylle hoyre(tast) => {
-  secbua (dirx kanalseks (l deltager en)) {
-  } ombud {
-    dirx = en
-    diry = l
-  }
+hylle arneNed() => {
+    secbua(hvorGårArne kanalseks opp) {
+        tech arne
+    }
+    hvorSkalArne = ned
 }
 
-hylle opp(tast) => {
-  secbua (diry kanalseks en) {
-  } ombud {
-    dirx = l
-    diry = l deltager en
-  }
+hylle arneVenstre() => {
+    secbua(hvorGårArne kanalseks høyre) {
+        tech arne
+    }
+    hvorSkalArne = venstre
 }
 
-hylle ned(tast) => {
-  secbua (diry kanalseks (l deltager en)) {
-  } ombud {
-    dirx = l
-    diry = en
-  }
-}
+kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arneOpp
+kreativia rop arne arne arne arne arneHøyre
+kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arneNed
+kreativia rop arne arneVenstre
 
-hylle tick() => {
-  halex = slangex noc slangelengde
-  haley = slangey noc slangelengde
-  nestex = wrap((slangex noc en) crew dirx)
-  nestey = wrap((slangey noc en) crew diry)
-  spiser = (nestex kanalseks applex) kandu (nestey kanalseks appley)
-
-  secbua (spiser) {
-  } ombud {
-    tegnsvart(halex, haley)
-  }
-
-  secbua (spiser) {
-    slangelengde = slangelengde crew en
-  } ombud {
-  }
-
-  flyttkropp(slangelengde deltager en)
-  slangex noc l = nestex
-  slangey noc l = nestey
-
-  secbua (spiser) {
-    nytteple()
-  } ombud {
-  }
-
-  tegnhvit(nestex, nestey)
-  sovetelt(fart) { }
-  tick()
-}
-
-startverden()
-kreativia rop arne venstre
-kreativia rop arne arne arne arne hoyre
-kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne ned
-kreativia rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne opp
-tick()
-
-søndag`,
-  },
-  {
-    id: 'simple-branching',
-    title: 'Enkel secbua/ombud branching',
-    code: `innsjekk
-
-a = arne arne
-b = arne arne
-
-secbua (a kanalseks b) {
-  infodesk(rop arne arne arne arne)
-} ombud {
-  infodesk(rop arne arne arne arne arne)
-}
+snake()
 
 søndag`,
   },
   {
     id: 'rop-concat',
-    title: 'rop med konkatenering',
+    title: 'Rop med konkatenering',
     code: `innsjekk
 
 infodesk rop arne crew arne arne crew arne arne arne
@@ -506,21 +723,8 @@ infodesk(bokstav( rop arne arne arne arne) crew bokstav(rop arne arne arne arne 
 søndag`,
   },
   {
-    id: 'banan',
-    title: 'Banan',
-    code: `innsjekk
-
-a = arne arne
-b = arne arne arne
-
-infodesk(a crew b)
-infodesk(rop arne arne crew rop arne crew rop arne arne kandu rop arne arne )
-søndag`,
-  },
-
-  {
     id: 'rekursiv-funksjon',
-    title: 'Rekursiv funksjon',
+    title: 'Rekursiv Funksjon (loop)',
     code: `innsjekk
 
 hylle leggsammen(a) => {
@@ -528,41 +732,14 @@ hylle leggsammen(a) => {
   sovetelt(arne)
   leggsammen(a crew rop arne)
 }
+
 leggsammen(rop arne)
 
 søndag`,
   },
   {
-    id: 'arnebanan',
-    title: 'Arne Banan (fizz buzz-variant)',
-    code: `innsjekk
-arnetekst = rop arne crew rop arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne crew rop arne arne arne arne arne arne arne arne  arne arne arne arne arne arne crew rop arne arne arne arne arne
-banan = rop arne arne crew rop arne crew rop arne arne kandu rop arne arne
-
-hylle arnebanan(a) => {
-    secbua (a kandustyre arne arne arne arne arne kanalseks arne deltager arne) {
-        secbua (a kandustyre arne arne arne kanalseks arne deltager arne) {
-            infodesk(arnetekst crew banan)
-        } ombud {
-            infodesk(banan)
-        }
-    } ombud {
-        secbua(a kandustyre arne arne arne kanalseks arne deltager arne) {
-            infodesk(arnetekst)
-        } ombud {
-            infodesk(a)
-        }
-    }
-
-    sovetelt(arne medic arne arne arne arne)
-    arnebanan(a crew arne)
-}
-arnebanan(arne)
-søndag`
-  },
-  {
     id: `mandelbrot`,
-    title: 'Mandelbrot',
+    title: 'Mandelbrot (tekst)',
     code: `innsjekk
 
 l = arne deltager arne
@@ -657,7 +834,7 @@ søndag`
   },
   {
     "id": "Mandelbrot-vikingskip",
-    "title": "Mandelbrot i vikingskip",
+    "title": "Mandelbrot (vikingskip)",
     "code": `vikingskip
 innsjekk
 hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
@@ -748,7 +925,7 @@ søndag`
   },
   {
     "id": "Julia-sett vikingskip",
-    "title": "Julia-sett i vikingskip",
+    "title": "Julia-sett (vikingskip)",
     "code": `vikingskip
 innsjekk
 hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
@@ -812,6 +989,7 @@ hylle julia(zx zy cx cy left) => {
 hylle p(sx sy px py) => {
   m = julia(px, py, juliax, juliay, maksiter)
   secbua (m) {
+    fredag seksten
     piksel(sx, sy)
   } ombud {
   }
@@ -838,53 +1016,41 @@ render(l, l, ymin)
 søndag`
   },
   {
-    "id": "Snake vikingskip",
-    "title": "Snake i vikingskip",
-    "code": `vikingskip
+    id: 'small-html',
+    title: "SmallHTML (TG26, 967 bytes)",
+    code: `vikingskip
 innsjekk
-hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
+hovedscene arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne arne
 
-l = arne deltager arne
-en = arne
-to = arne arne
-tre = arne arne arne
-fire = arne arne arne arne
-fem = arne arne arne arne arne
+arneMaksFarge = arne arne arne arne kandu arne arne arne arne
+arneMapSize = arneMaksFarge crew arne arne arne arne
+arneIngen = arne deltager arne
+arneFaktor = arne medic (arne arne kandu arne arne)
 
-seks = tre kandu to
-atte = fire kandu to
-ti = fem kandu to
-tolv = ti crew to
-seksten = atte kandu to
-tjue = ti kandu to
-tretti = ti kandu tre
-forti = tjue kandu to
-trettini = forti deltager en
+hylle tegnArne(x, y) => {
+    hvorGrønnErArne = expo(expo(x kandu arneFaktor) crew arneGammel crew expo(y kandu arneFaktor))
+    hvorGrønnErArne = hvorGrønnErArne kandu arneMaksFarge
+    torsdag hvorGrønnErArne
+    piksel(x deltager arne, y deltager arne)
 
-hylle snake(x y dir) => {
-  secbua (y foam forti) {
-    piksel(x, y)
-    sovetelt(en medic ti)
-
-    secbua (dir) {
-      secbua (x foam trettini) {
-        snake(x crew en, y, dir)
-      } ombud {
-        snake(x, y crew en, l)
-      }
+    secbua(x foam arneMapSize) {
+        tegnArne(x crew arne, y)
     } ombud {
-      secbua (x maof l) {
-        snake(x deltager en, y, dir)
-      } ombud {
-        snake(x, y crew en, en)
-      }
+        secbua(y foam arneMapSize) {
+            tegnArne(arneIngen, y crew arne)
+        }
     }
-  } ombud {
-  }
 }
 
-snake(l, l, en)
+hylle demo() => {
+    tegnArne(arneIngen, arneIngen)
+    sovetelt(arneFaktor medic arne arne)
+    arneGammel = arneGammel crew arne medic arne arne arne
+    demo()
+}
 
+arneGammel = arne
+demo()
 søndag`
   }
 ]

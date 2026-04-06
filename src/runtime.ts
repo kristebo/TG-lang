@@ -150,7 +150,7 @@ export async function runTG(source: string, options?: RunOptions): Promise<RunRe
     const tgRuntime = {
       ensureActive: () => ensureRunActive(run),
       sleep: (milliseconds: number) => sleepWithAbort(milliseconds, run),
-      pall: () => (globalThis.performance?.now?.() ?? Date.now()) % 1,
+      pall: () => Math.random(),
       initCanvas: async (resolution: number) => {
         ensureRunActive(run)
         const safeResolution = Math.max(1, Math.floor(Number.isFinite(resolution) ? resolution : 1))
