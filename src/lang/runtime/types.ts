@@ -85,6 +85,7 @@ export interface RunOptions {
 export interface ActiveRun {
   id: number
   aborted: boolean
+  stopRequested: boolean
   cleanups: Array<() => void>
   keepAlive: {
     promise: Promise<void>
