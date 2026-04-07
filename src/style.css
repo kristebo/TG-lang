@@ -23,6 +23,10 @@ body {
   background: radial-gradient(circle at 15% 20%, #fff9eb 0%, #f7f3e9 45%, #efe6d7 100%);
 }
 
+a {
+  color: var(--accent-2);
+}
+
 #app {
   width: min(1200px, 100% - 2rem);
   margin: 1.2rem auto 2rem;
@@ -56,6 +60,10 @@ h1 {
   line-height: 1;
 }
 
+h3 {
+  margin: 1rem 0 0.35rem;
+}
+
 .hero-title {
   display: flex;
   align-items: center;
@@ -71,6 +79,19 @@ h1 {
 .subtitle {
   margin: 0;
   color: var(--muted);
+}
+
+.workspace-grid,
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.runtime-stack {
+  display: grid;
+  gap: 1rem;
 }
 
 .toolbar {
@@ -96,17 +117,16 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 button.run {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
   font-weight: 700;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
 }
 
 .panel {
@@ -121,12 +141,66 @@ button.run {
   animation-delay: 80ms;
 }
 
+.panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.35rem 1rem;
+}
+
+.panel-toolbar {
+  margin: 0.35rem 0 0.75rem;
+}
+
 h2 {
   margin: 0 0 0.45rem;
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent-2);
+}
+
+.panel-meta {
+  margin: 0 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.panel-note,
+.debugger-placeholder {
+  border: 1px dashed #d5c8a9;
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: #faf7ef;
+  color: var(--muted);
+}
+
+.panel-note {
+  margin: 0;
+}
+
+.debugger-placeholder p {
+  margin-top: 0;
+}
+
+.debugger-placeholder ul,
+.spec ul {
+  padding-left: 1.15rem;
+}
+
+.canvas-wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.2rem;
+}
+
+.spec {
+  margin-top: 1rem;
+}
+
+.spec > a {
+  font-weight: 600;
 }
 
 textarea,
@@ -154,13 +228,33 @@ pre {
   background: #faf4e4;
   color: var(--output);
   min-height: 110px;
-  overflow: auto;
   max-height: 45vh;
   margin-bottom: 0.75rem;
-  overflow: auto;
+}
+
+.site-footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: var(--muted);
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer a {
+  text-decoration: none;
+  font-weight: 700;
 }
 
 @media (max-width: 900px) {
+  .workspace-grid,
   .grid {
     grid-template-columns: 1fr;
   }
