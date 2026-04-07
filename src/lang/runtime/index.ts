@@ -12,17 +12,56 @@ import {
   createSandboxConsole,
   executeTranspiledProgram,
 } from './sandbox'
-import type { RunOptions, RunResult, RuntimeDebugEvent } from './types'
+import type {
+  ActiveRun,
+  RunOptions,
+  RunResult,
+  RuntimeDebugEvent,
+  RuntimeDebugPhase,
+} from './types'
+
+const emitDebugEvent = (
+  options: RunOptions | undefined,
+  event: RuntimeDebugEvent,
+): void => {
+  options?.onDebugEvent?.(event)
+}
 
 const emitDebugPhase = (
   options: RunOptions | undefined,
-  phase: RuntimeDebugEvent['phase'],
+  phase: RuntimeDebugPhase,
 ): void => {
-  options?.onDebugEvent?.({ type: 'phase', phase })
+  emitDebugEvent(options, {
+    type: 'phase',
+    phase,
+    timestamp: Date.now(),
+  })
+}
+
+const emitSessionEvent = (
+  options: RunOptions | undefined,
+  run: ActiveRun,
+  status: Extract<RuntimeDebugEvent, { type: 'session' }>['status'],
+  sourceLength: number,
+  error?: string,
+): void => {
+  emitDebugEvent(options, {
+    type: 'session',
+    runId: run.id,
+    status,
+    sourceLength,
+    error,
+    timestamp: Date.now(),
+  })
 }
 
 export { compileTG } from './compiler'
-export type { RunOptions, RunResult, RuntimeDebugEvent } from './types'
+export type {
+  RunOptions,
+  RunResult,
+  RuntimeDebugEvent,
+  RuntimeDebugPhase,
+} from './types'
 
 export function stopTG(): { success: boolean; error?: string } {
   return stopActiveRun()
@@ -36,11 +75,21 @@ export async function runTG(
   let javascript = ''
   const run = createRun()
   setActiveRun(run)
+  emitSessionEvent(options, run, 'started', source.length)
 
   try {
     const compiled = compileTG(source, (phase) => emitDebugPhase(options, phase))
     const { ast } = compiled
     javascript = compiled.javascript
+
+    emitDebugEvent(options, {
+      type: 'compile',
+      mode: ast.mode,
+      resolution: ast.resolution,
+      statementCount: ast.body.length,
+      javascriptLength: javascript.length,
+      timestamp: Date.now(),
+    })
 
     emitDebugPhase(options, 'execute')
     const tgRuntime = createRuntimeApi(run, options)
@@ -56,6 +105,13 @@ export async function runTG(
       throw run.failure
     }
 
+    emitSessionEvent(
+      options,
+      run,
+      run.aborted ? 'stopped' : 'completed',
+      source.length,
+    )
+
     return {
       output,
       javascript,
@@ -64,6 +120,7 @@ export async function runTG(
     }
   } catch (error) {
     if (error instanceof TGStopError) {
+      emitSessionEvent(options, run, 'stopped', source.length)
       return {
         output,
         javascript,
@@ -71,10 +128,13 @@ export async function runTG(
       }
     }
 
+    const message = error instanceof Error ? error.message : 'Ukjent feil'
+    emitSessionEvent(options, run, 'error', source.length, message)
+
     return {
       output,
       javascript,
-      error: error instanceof Error ? error.message : 'Ukjent feil',
+      error: message,
     }
   } finally {
     emitDebugPhase(options, 'idle')

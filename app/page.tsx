@@ -11,6 +11,7 @@ import { DocumentationPanel } from './components/DocumentationPanel'
 import { EditorPanel } from './components/EditorPanel'
 import { ProgramOutputPanel } from './components/ProgramOutputPanel'
 import { VikingskipCanvasPanel } from './components/VikingskipCanvasPanel'
+import { useTGDebugger } from './hooks/useTGDebugger'
 
 type Pixel = {
   x: number
@@ -28,6 +29,12 @@ export default function Home() {
   const [running, setRunning] = useState<boolean>(false)
   const [canvasResolution, setCanvasResolution] = useState<number | null>(null)
   const [pixels, setPixels] = useState<Pixel[]>([])
+  const {
+    debuggerState,
+    debuggerRuntimeOptions,
+    syncRunResult,
+    captureRuntimeFailure,
+  } = useTGDebugger()
   const isVikingskipMode = /^\s*vikingskip\b/m.test(source)
   const visibleCanvasResolution = isVikingskipMode ? (canvasResolution ?? DEFAULT_CANVAS_RESOLUTION) : null
 
@@ -64,6 +71,7 @@ export default function Home() {
 
     try {
       const result = await runTG(source, {
+        ...debuggerRuntimeOptions,
         onOutput: (_line, allLines) => {
           setOutput(allLines.join('\n'))
         },
@@ -75,6 +83,7 @@ export default function Home() {
         },
       })
 
+      syncRunResult(result)
       setJavascript(result.javascript)
 
       if (result.error) {
@@ -89,6 +98,7 @@ export default function Home() {
 
       setOutput(result.output.length > 0 ? result.output.join('\n') : '(ingen output)')
     } catch (error) {
+      captureRuntimeFailure(error)
       setOutput(`Feil: ${error instanceof Error ? error.message : String(error)}`)
     } finally {
       setRunning(false)
@@ -131,7 +141,7 @@ export default function Home() {
               pixels={pixels}
             />
             <ProgramOutputPanel output={output} javascript={javascript} />
-            <DebuggerPanel />
+            <DebuggerPanel state={debuggerState} />
           </section>
         </section>
 

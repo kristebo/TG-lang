@@ -11,6 +11,7 @@ import type {
   ActiveRun,
   RunOptions,
   RuntimeApi,
+  RuntimeDebugEvent,
   SandboxConsole,
 } from './types'
 
@@ -51,6 +52,13 @@ const formatKeyboardKey = (key: string): string =>
 const clampChannelValue = (value: number): number =>
   Math.min(TG_COLOR_CHANNEL_MAX, Math.max(0, Math.floor(value)))
 
+const emitRuntimeDebugEvent = (
+  options: RunOptions | undefined,
+  event: RuntimeDebugEvent,
+): void => {
+  options?.onDebugEvent?.(event)
+}
+
 export function createSandboxConsole(
   run: ActiveRun,
   output: string[],
@@ -62,6 +70,12 @@ export function createSandboxConsole(
       const line = args.map((arg) => stringifyValue(arg)).join(' ')
       output.push(line)
       options?.onOutput?.(line, [...output])
+      emitRuntimeDebugEvent(options, {
+        type: 'output',
+        line,
+        lineCount: output.length,
+        timestamp: Date.now(),
+      })
     },
   }
 }
@@ -70,6 +84,7 @@ async function registerKreativiaHandler(
   run: ActiveRun,
   rawKey: unknown,
   handler: unknown,
+  options?: RunOptions,
 ): Promise<void> {
   ensureRunActive(run)
   if (typeof document === 'undefined') {
@@ -83,6 +98,11 @@ async function registerKreativiaHandler(
   const expectedKey = formatKeyboardKey(stringifyValue(rawKey))
   const expectedMatchKey = normalizeKeyboardKeyForMatch(expectedKey)
   createKeepAlive(run)
+  emitRuntimeDebugEvent(options, {
+    type: 'kreativia:register',
+    key: expectedKey,
+    timestamp: Date.now(),
+  })
 
   const listener = async (event: Event) => {
     if (!isRunActive(run)) {
@@ -98,6 +118,12 @@ async function registerKreativiaHandler(
     if (normalizeKeyboardKeyForMatch(actualKey) !== expectedMatchKey) {
       return
     }
+
+    emitRuntimeDebugEvent(options, {
+      type: 'kreativia:trigger',
+      key: actualKey,
+      timestamp: Date.now(),
+    })
 
     try {
       ensureRunActive(run)
@@ -125,6 +151,8 @@ export function createRuntimeApi(
   run: ActiveRun,
   options?: RunOptions,
 ): RuntimeApi {
+  let pixelCount = 0
+
   return {
     ensureActive: () => ensureRunActive(run),
     sleep: (milliseconds: number) => sleepWithAbort(milliseconds, run),
@@ -136,19 +164,35 @@ export function createRuntimeApi(
         Math.floor(Number.isFinite(resolution) ? resolution : 1),
       )
       options?.onCanvasInit?.(safeResolution)
+      emitRuntimeDebugEvent(options, {
+        type: 'canvas:init',
+        resolution: safeResolution,
+        timestamp: Date.now(),
+      })
     },
     putPixel: async (x: number, y: number, r = 0, g = 0, b = 0) => {
       ensureRunActive(run)
-      options?.onPixel?.(
-        Math.floor(x),
-        Math.floor(y),
-        clampChannelValue(r),
-        clampChannelValue(g),
-        clampChannelValue(b),
-      )
+      const safeX = Math.floor(x)
+      const safeY = Math.floor(y)
+      const safeR = clampChannelValue(r)
+      const safeG = clampChannelValue(g)
+      const safeB = clampChannelValue(b)
+      pixelCount += 1
+
+      options?.onPixel?.(safeX, safeY, safeR, safeG, safeB)
+      emitRuntimeDebugEvent(options, {
+        type: 'canvas:pixel',
+        x: safeX,
+        y: safeY,
+        r: safeR,
+        g: safeG,
+        b: safeB,
+        pixelCount,
+        timestamp: Date.now(),
+      })
     },
     kreativia: async (rawKey: unknown, handler: unknown) =>
-      registerKreativiaHandler(run, rawKey, handler),
+      registerKreativiaHandler(run, rawKey, handler, options),
   }
 }
 
