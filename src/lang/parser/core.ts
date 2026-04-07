@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   AssignmentStatement,
   BinaryExpression,
   CallExpression,
@@ -22,10 +22,11 @@
   SeatingExpression,
   SleepStatement,
   Statement,
-  TrigExpression,
   ThrowStatement,
-} from './ast'
-import type { Token } from './tokenizer'
+  TrigExpression,
+} from '../ast'
+import { BINARY_OPERATOR_WORDS, TG_RESERVED_WORD_SET } from '../constants'
+import type { Token } from '../tokenizer'
 
 export class ParseError extends Error {
   constructor(message: string) {
@@ -34,43 +35,9 @@ export class ParseError extends Error {
   }
 }
 
-const RESERVED = new Set([
-  'vikingskip',
-  'hovedscene',
-  'piksel',
-  'innsjekk',
-  'søndag',
-  'arne',
-  'rop',
-  'infodesk',
-  'crew',
-  'deltager',
-  'kandu',
-  'kandustyre',
-  'medic',
-  'foam',
-  'maof',
-  'kanalseks',
-  'secbua',
-  'ombud',
-  'hylle',
-  'tech',
-  'sovetelt',
-  'attentiongrab',
-  'pall',
-  'lørdag',
-  'premiumparkering',
-  'trafikklys',
-  'expo',
-  'seating',
-  'noc',
-  'kreativia',
-  'onsdag',
-  'torsdag',
-  'fredag',
-])
+type BinaryOperatorMap = Partial<Record<string, BinaryExpression['operator']>>
 
-class Parser {
+export class Parser {
   private index = 0
   private readonly tokens: Token[]
 
@@ -79,7 +46,7 @@ class Parser {
   }
 
   parseProgram(): Program {
-    let mode: 'text' | 'canvas' = 'text'
+    let mode: Program['mode'] = 'text'
     let resolution: number | null = null
 
     this.consumeNewlines()
@@ -111,63 +78,49 @@ class Parser {
   }
 
   private parseStatement(): Statement {
-    if (this.isWord('infodesk')) {
-      return this.parseInfodesk()
-    }
+    switch (this.peekWord()) {
+      case 'infodesk':
+        return this.parseInfodesk()
+      case 'onsdag':
+      case 'torsdag':
+      case 'fredag':
+        return this.parseColorRegister()
+      case 'piksel':
+        return this.parsePixel()
+      case 'secbua':
+        return this.parseConditional()
+      case 'hylle':
+        return this.parseFunctionDeclaration()
+      case 'tech':
+        return this.parseReturn()
+      case 'sovetelt':
+        return this.parseSleep()
+      case 'attentiongrab':
+        return this.parseThrow()
+      case 'kreativia':
+        return this.parseKreativaStatement()
+      default:
+        if (this.isIndexedAssignmentStart()) {
+          return this.parseIndexedAssignment()
+        }
 
-    if (this.isWord('onsdag') || this.isWord('torsdag') || this.isWord('fredag')) {
-      return this.parseColorRegister()
-    }
+        if (this.isType('WORD') && this.peek(1).type === 'EQUALS') {
+          return this.parseAssignment()
+        }
 
-    if (this.isWord('piksel')) {
-      return this.parsePixel()
+        return this.parseExpressionStatement()
     }
+  }
 
-    if (this.isWord('secbua')) {
-      return this.parseConditional()
-    }
-
-    if (this.isWord('hylle')) {
-      return this.parseFunctionDeclaration()
-    }
-
-    if (this.isWord('tech')) {
-      return this.parseReturn()
-    }
-
-    if (this.isWord('sovetelt')) {
-      return this.parseSleep()
-    }
-
-    if (this.isWord('attentiongrab')) {
-      return this.parseThrow()
-    }
-
-    if (this.isWord('kreativia')) {
-      return this.parseKreativaStatement()
-    }
-
-    if (this.isIndexedAssignmentStart()) {
-      return this.parseIndexedAssignment()
-    }
-
-    if (this.isType('WORD') && this.peek(1).type === 'EQUALS') {
-      return this.parseAssignment()
-    }
-
-    const expressionStatement: ExpressionStatement = {
+  private parseExpressionStatement(): ExpressionStatement {
+    return {
       type: 'ExpressionStatement',
       expression: this.parseExpression(),
     }
-    return expressionStatement
   }
 
   private parseAssignment(): AssignmentStatement {
-    const nameToken = this.expectType('WORD')
-    if (RESERVED.has(nameToken.value)) {
-      throw this.error(nameToken, `Ugyldig variabelnavn '${nameToken.value}'.`)
-    }
-
+    const nameToken = this.expectIdentifier('variabelnavn')
     this.expectType('EQUALS')
 
     return {
@@ -178,11 +131,7 @@ class Parser {
   }
 
   private parseIndexedAssignment(): IndexedAssignmentStatement {
-    const nameToken = this.expectType('WORD')
-    if (RESERVED.has(nameToken.value)) {
-      throw this.error(nameToken, `Ugyldig variabelnavn '${nameToken.value}'.`)
-    }
-
+    const nameToken = this.expectIdentifier('variabelnavn')
     this.expectWord('noc')
     const index = this.parseExpression()
     this.expectType('EQUALS')
@@ -197,16 +146,10 @@ class Parser {
 
   private parseInfodesk(): InfodeskStatement {
     this.expectWord('infodesk')
-
-    let expression: Expression
-    if (this.matchType('LPAREN')) {
-      expression = this.parseExpression()
-      this.expectType('RPAREN')
-    } else {
-      expression = this.parseExpression()
+    return {
+      type: 'InfodeskStatement',
+      expression: this.parseMaybeParenthesizedExpression(),
     }
-
-    return { type: 'InfodeskStatement', expression }
   }
 
   private parseFunctionDeclaration(): FunctionDeclaration {
@@ -214,34 +157,32 @@ class Parser {
 
     let name: string | null = null
     if (this.isType('WORD') && this.peek(1).type === 'LPAREN') {
-      const nameToken = this.expectType('WORD')
-      if (nameToken.value !== '_' && RESERVED.has(nameToken.value)) {
-        throw this.error(nameToken, `Ugyldig funksjonsnavn '${nameToken.value}'.`)
-      }
+      const nameToken = this.expectIdentifier('funksjonsnavn', { allowPlaceholder: true })
       name = nameToken.value === '_' ? null : nameToken.value
     }
 
     this.expectType('LPAREN')
-    const params: string[] = []
-    while (!this.isType('RPAREN')) {
-      const paramToken = this.expectType('WORD')
-      if (RESERVED.has(paramToken.value)) {
-        throw this.error(paramToken, `Ugyldig parameter '${paramToken.value}'.`)
-      }
-
-      params.push(paramToken.value)
-      this.matchType('COMMA')
-    }
+    const params = this.parseParameterList()
     this.expectType('RPAREN')
 
     this.expectType('ARROW')
-    const body = this.parseBlock('Funksjonsblokk ble ikke avsluttet med }.')
     return {
       type: 'FunctionDeclaration',
       name,
       params,
-      body,
+      body: this.parseBlock('Funksjonsblokk ble ikke avsluttet med }.'),
     }
+  }
+
+  private parseParameterList(): string[] {
+    const params: string[] = []
+
+    while (!this.isType('RPAREN')) {
+      params.push(this.expectIdentifier('parameter').value)
+      this.matchType('COMMA')
+    }
+
+    return params
   }
 
   private parsePixel(): PixelStatement {
@@ -280,11 +221,7 @@ class Parser {
     this.expectType('RPAREN')
 
     const thenBody = this.parseBlock('secbua-blokk ble ikke avsluttet med }.')
-
-    let elseBody: Statement[] | null = null
-    if (this.matchWord('ombud')) {
-      elseBody = this.parseBlock('ombud-blokk ble ikke avsluttet med }.')
-    }
+    const elseBody = this.matchWord('ombud') ? this.parseBlock('ombud-blokk ble ikke avsluttet med }.') : null
 
     return {
       type: 'ConditionalStatement',
@@ -324,6 +261,7 @@ class Parser {
     this.expectType('LPAREN')
     const expression = this.parseExpression()
     this.expectType('RPAREN')
+
     return {
       type: 'ThrowStatement',
       expression,
@@ -332,12 +270,10 @@ class Parser {
 
   private parseKreativaStatement(): KreativaStatement {
     this.expectWord('kreativia')
-    const key = this.parseExpression()
-    const handler = this.parseExpression()
     return {
       type: 'KreativaStatement',
-      key,
-      handler,
+      key: this.parseExpression(),
+      handler: this.parseExpression(),
     }
   }
 
@@ -346,64 +282,32 @@ class Parser {
   }
 
   private parseEquality(): Expression {
-    let left = this.parseComparison()
-
-    while (this.matchWord('kanalseks')) {
-      const right = this.parseComparison()
-      const node: BinaryExpression = {
-        type: 'BinaryExpression',
-        operator: '==',
-        left,
-        right,
-      }
-      left = node
-    }
-
-    return left
+    return this.parseLeftAssociative(() => this.parseComparison(), BINARY_OPERATOR_WORDS.equality)
   }
 
   private parseComparison(): Expression {
-    let left = this.parseAdditive()
-
-    while (this.isWord('foam') || this.isWord('maof')) {
-      const word = this.expectType('WORD').value
-      const operator = word === 'foam' ? '<' : '>'
-      const right = this.parseAdditive()
-      left = {
-        type: 'BinaryExpression',
-        operator,
-        left,
-        right,
-      }
-    }
-
-    return left
+    return this.parseLeftAssociative(() => this.parseAdditive(), BINARY_OPERATOR_WORDS.comparison)
   }
 
   private parseAdditive(): Expression {
-    let left = this.parseMultiplicative()
-
-    while (this.isWord('crew') || this.isWord('deltager')) {
-      const operator = this.expectType('WORD').value === 'crew' ? '+' : '-'
-      const right = this.parseMultiplicative()
-      left = {
-        type: 'BinaryExpression',
-        operator,
-        left,
-        right,
-      }
-    }
-
-    return left
+    return this.parseLeftAssociative(() => this.parseMultiplicative(), BINARY_OPERATOR_WORDS.additive)
   }
 
   private parseMultiplicative(): Expression {
-    let left = this.parsePrimary()
+    return this.parseLeftAssociative(() => this.parsePostfixExpression(), BINARY_OPERATOR_WORDS.multiplicative)
+  }
 
-    while (this.isWord('kandu') || this.isWord('medic') || this.isWord('kandustyre')) {
-      const word = this.expectType('WORD').value
-      const operator = word === 'kandu' ? '*' : word === 'medic' ? '/' : '%'
-      const right = this.parsePrimary()
+  private parseLeftAssociative(next: () => Expression, operators: BinaryOperatorMap): Expression {
+    let left = next()
+
+    while (this.isType('WORD')) {
+      const operator = operators[this.peek().value]
+      if (!operator) {
+        break
+      }
+
+      this.expectType('WORD')
+      const right = next()
       left = {
         type: 'BinaryExpression',
         operator,
@@ -415,24 +319,12 @@ class Parser {
     return left
   }
 
-  private parsePrimary(): Expression {
-    let expression = this.parseAtomicPrimary()
+  private parsePostfixExpression(): Expression {
+    let expression = this.parseAtomicExpression()
 
     while (true) {
       if (this.matchType('LPAREN')) {
-        const args: Expression[] = []
-        while (!this.isType('RPAREN')) {
-          args.push(this.parseExpression())
-          this.matchType('COMMA')
-        }
-        this.expectType('RPAREN')
-
-        const call: CallExpression = {
-          type: 'CallExpression',
-          callee: expression,
-          args,
-        }
-        expression = call
+        expression = this.finishCallExpression(expression)
         continue
       }
 
@@ -445,58 +337,60 @@ class Parser {
     }
   }
 
-  private parseAtomicPrimary(): Expression {
-    if (this.isWord('seating')) {
-      return this.parseSeatingExpression()
+  private finishCallExpression(callee: Expression): CallExpression {
+    const args = this.parseExpressionList('RPAREN')
+    this.expectType('RPAREN')
+
+    return {
+      type: 'CallExpression',
+      callee,
+      args,
+    }
+  }
+
+  private parseAtomicExpression(): Expression {
+    switch (this.peekWord()) {
+      case 'seating':
+        return this.parseSeatingExpression()
+      case 'lørdag':
+        return this.parseLordagExpression()
+      case 'rop':
+        return this.parseRopExpression()
+      case 'pall':
+        return this.parsePallExpression()
+      case 'premiumparkering':
+        return this.parsePiExpression()
+      case 'trafikklys':
+        return this.parseTrigExpression('tan')
+      case 'expo':
+        return this.parseTrigExpression('sin')
+      case 'arne':
+        return this.parseArneSequence()
+      default:
+        if (this.matchType('LPAREN')) {
+          const expression = this.parseExpression()
+          this.expectType('RPAREN')
+          return expression
+        }
+
+        if (this.isType('WORD')) {
+          return this.parseIdentifierExpression()
+        }
+
+        throw this.error(this.peek(), `Uventet token '${this.peek().value || this.peek().type}' i uttrykk.`)
+    }
+  }
+
+  private parseIdentifierExpression(): Expression {
+    const identifierToken = this.expectType('WORD')
+    if (TG_RESERVED_WORD_SET.has(identifierToken.value)) {
+      throw this.error(identifierToken, `Uventet keyword '${identifierToken.value}' i uttrykk.`)
     }
 
-    if (this.isWord('lørdag')) {
-      return this.parseLordagExpression()
+    return {
+      type: 'Identifier',
+      name: identifierToken.value,
     }
-
-    if (this.isWord('rop')) {
-      return this.parseRopExpression()
-    }
-
-    if (this.isWord('pall')) {
-      return this.parsePallExpression()
-    }
-
-    if (this.isWord('premiumparkering')) {
-      return this.parsePiExpression()
-    }
-
-    if (this.isWord('trafikklys')) {
-      return this.parseTrigExpression('tan')
-    }
-
-    if (this.isWord('expo')) {
-      return this.parseTrigExpression('sin')
-    }
-
-    if (this.isWord('arne')) {
-      return this.parseArneSequence()
-    }
-
-    if (this.matchType('LPAREN')) {
-      const expr = this.parseExpression()
-      this.expectType('RPAREN')
-      return expr
-    }
-
-    if (this.isType('WORD')) {
-      const identifierToken = this.expectType('WORD')
-      if (RESERVED.has(identifierToken.value)) {
-        throw this.error(identifierToken, `Uventet keyword '${identifierToken.value}' i uttrykk.`)
-      }
-
-      return {
-        type: 'Identifier',
-        name: identifierToken.value,
-      }
-    }
-
-    throw this.error(this.peek(), `Uventet token '${this.peek().value || this.peek().type}' i uttrykk.`)
   }
 
   private parseArneSequence(): NumberLiteral {
@@ -542,7 +436,7 @@ class Parser {
     this.expectWord('lørdag')
     return {
       type: 'LordagExpression',
-      expression: this.parsePrimary(),
+      expression: this.parsePostfixExpression(),
     }
   }
 
@@ -561,14 +455,11 @@ class Parser {
   }
 
   private parseTrigExpression(fn: 'sin' | 'tan'): TrigExpression {
-    if (fn === 'sin') {
-      this.expectWord('expo')
-    } else {
-      this.expectWord('trafikklys')
-    }
+    this.expectWord(fn === 'sin' ? 'expo' : 'trafikklys')
     this.expectType('LPAREN')
     const angle = this.parseExpression()
     this.expectType('RPAREN')
+
     return {
       type: 'TrigExpression',
       fn,
@@ -579,15 +470,10 @@ class Parser {
   private parseSeatingExpression(): SeatingExpression {
     this.expectWord('seating')
     const length = this.parseSeatingLengthExpression()
-    const elements: Expression[] = []
 
+    let elements: Expression[] = []
     if (this.matchType('LPAREN')) {
-      this.consumeNewlines()
-      while (!this.isType('RPAREN')) {
-        elements.push(this.parseExpression())
-        this.matchType('COMMA')
-        this.consumeNewlines()
-      }
+      elements = this.parseExpressionList('RPAREN', { consumeNewlines: true })
       this.expectType('RPAREN')
     }
 
@@ -599,7 +485,7 @@ class Parser {
   }
 
   private parseSeatingLengthExpression(): Expression {
-    let expression = this.parseAtomicPrimary()
+    let expression = this.parseAtomicExpression()
 
     while (this.matchWord('noc')) {
       expression = this.parseNocExpression(expression)
@@ -609,12 +495,40 @@ class Parser {
   }
 
   private parseNocExpression(target: Expression): NocExpression {
-    const index = this.parsePrimary()
     return {
       type: 'NocExpression',
       target,
-      index,
+      index: this.parsePostfixExpression(),
     }
+  }
+
+  private parseExpressionList(endType: 'RPAREN', options?: { consumeNewlines?: boolean }): Expression[] {
+    const expressions: Expression[] = []
+
+    if (options?.consumeNewlines) {
+      this.consumeNewlines()
+    }
+
+    while (!this.isType(endType)) {
+      expressions.push(this.parseExpression())
+      this.matchType('COMMA')
+
+      if (options?.consumeNewlines) {
+        this.consumeNewlines()
+      }
+    }
+
+    return expressions
+  }
+
+  private parseMaybeParenthesizedExpression(): Expression {
+    if (!this.matchType('LPAREN')) {
+      return this.parseExpression()
+    }
+
+    const expression = this.parseExpression()
+    this.expectType('RPAREN')
+    return expression
   }
 
   private parseBlock(eofErrorMessage: string): Statement[] {
@@ -642,7 +556,12 @@ class Parser {
   }
 
   private peek(offset = 0): Token {
-    return this.tokens[Math.min(this.index + offset, this.tokens.length - 1)]
+    const safeIndex = Math.max(0, Math.min(this.index + offset, this.tokens.length - 1))
+    return this.tokens[safeIndex]
+  }
+
+  private peekWord(): string | null {
+    return this.isType('WORD') ? this.peek().value : null
   }
 
   private matchType(type: Token['type']): boolean {
@@ -681,6 +600,15 @@ class Parser {
     return token
   }
 
+  private expectIdentifier(kind: 'variabelnavn' | 'funksjonsnavn' | 'parameter', options?: { allowPlaceholder?: boolean }): Token {
+    const token = this.expectType('WORD')
+    if ((options?.allowPlaceholder && token.value === '_') || !TG_RESERVED_WORD_SET.has(token.value)) {
+      return token
+    }
+
+    throw this.error(token, `Ugyldig ${kind} '${token.value}'.`)
+  }
+
   private isType(type: Token['type']): boolean {
     return this.peek().type === type
   }
@@ -697,7 +625,7 @@ class Parser {
   private isIndexedAssignmentStart(): boolean {
     const token = this.peek()
     const next = this.peek(1)
-    return token.type === 'WORD' && !RESERVED.has(token.value) && next.type === 'WORD' && next.value === 'noc'
+    return token.type === 'WORD' && !TG_RESERVED_WORD_SET.has(token.value) && next.type === 'WORD' && next.value === 'noc'
   }
 }
 

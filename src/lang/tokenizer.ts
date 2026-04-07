@@ -24,6 +24,15 @@ export class TokenizeError extends Error {
   }
 }
 
+const SINGLE_CHAR_TOKENS = {
+  '(': 'LPAREN',
+  ')': 'RPAREN',
+  '{': 'LBRACE',
+  '}': 'RBRACE',
+  ',': 'COMMA',
+  '=': 'EQUALS',
+} as const satisfies Record<string, Exclude<TokenType, 'WORD' | 'ARROW' | 'NEWLINE' | 'EOF'>>
+
 const isWordStart = (char: string): boolean => /[\p{L}_]/u.test(char)
 const isWordPart = (char: string): boolean => /[\p{L}_]/u.test(char)
 const isDigit = (char: string): boolean => /\p{N}/u.test(char)
@@ -67,43 +76,9 @@ export function tokenize(input: string): Token[] {
       continue
     }
 
-    if (char === '(') {
-      pushToken('LPAREN', char)
-      index += 1
-      column += 1
-      continue
-    }
-
-    if (char === ')') {
-      pushToken('RPAREN', char)
-      index += 1
-      column += 1
-      continue
-    }
-
-    if (char === '{') {
-      pushToken('LBRACE', char)
-      index += 1
-      column += 1
-      continue
-    }
-
-    if (char === '}') {
-      pushToken('RBRACE', char)
-      index += 1
-      column += 1
-      continue
-    }
-
-    if (char === ',') {
-      pushToken('COMMA', char)
-      index += 1
-      column += 1
-      continue
-    }
-
-    if (char === '=') {
-      pushToken('EQUALS', char)
+    const singleCharToken = SINGLE_CHAR_TOKENS[char as keyof typeof SINGLE_CHAR_TOKENS]
+    if (singleCharToken) {
+      pushToken(singleCharToken, char)
       index += 1
       column += 1
       continue

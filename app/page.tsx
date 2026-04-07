@@ -1,7 +1,8 @@
 ﻿'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { runTG, stopTG } from '../src/runtime'
+import { DEFAULT_CANVAS_RESOLUTION } from '../src/lang/constants'
+import { runTG, stopTG } from '../src/lang/runtime'
 import { EXAMPLES } from '../src/samples'
 import { AppFooter } from './components/AppFooter'
 import { AppHeader } from './components/AppHeader'
@@ -10,8 +11,6 @@ import { DocumentationPanel } from './components/DocumentationPanel'
 import { EditorPanel } from './components/EditorPanel'
 import { ProgramOutputPanel } from './components/ProgramOutputPanel'
 import { VikingskipCanvasPanel } from './components/VikingskipCanvasPanel'
-
-const DEFAULT_CANVAS_RESOLUTION = 16
 
 type Pixel = {
   x: number

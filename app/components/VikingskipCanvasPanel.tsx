@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-
-const COLOR_CHANNEL_MAX = 15
+import { TG_COLOR_CHANNEL_MAX } from '../../src/lang/constants'
 
 type Pixel = {
   x: number
@@ -48,7 +47,7 @@ export function VikingskipCanvasPanel({
         continue
       }
 
-      ctx.fillStyle = `rgb(${Math.round((pixel.r / COLOR_CHANNEL_MAX) * 255)}, ${Math.round((pixel.g / COLOR_CHANNEL_MAX) * 255)}, ${Math.round((pixel.b / COLOR_CHANNEL_MAX) * 255)})`
+      ctx.fillStyle = `rgb(${Math.round((pixel.r / TG_COLOR_CHANNEL_MAX) * 255)}, ${Math.round((pixel.g / TG_COLOR_CHANNEL_MAX) * 255)}, ${Math.round((pixel.b / TG_COLOR_CHANNEL_MAX) * 255)})`
       ctx.fillRect(pixel.x * pixelSize, pixel.y * pixelSize, pixelSize, pixelSize)
     }
   }, [isActive, resolution, pixels])
