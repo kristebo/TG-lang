@@ -1,4 +1,7 @@
+'use client'
+
 import type { TGDebuggerState } from '../hooks/useTGDebugger'
+import { useTGStop } from '../providers/TGStopProvider'
 import { DebuggerEventList } from './DebuggerEventList'
 
 type DebuggerPanelProps = {
@@ -17,6 +20,8 @@ const formatValue = (value: number | string | null, fallback = '—'): string =>
   value === null || value === '' ? fallback : String(value)
 
 export function DebuggerPanel({ state }: DebuggerPanelProps) {
+  const { activeSession, canStop, stopActiveSession } = useTGStop()
+
   return (
     <article className="panel">
       <div className="panel-heading">
@@ -26,10 +31,21 @@ export function DebuggerPanel({ state }: DebuggerPanelProps) {
             Live runtime-hook for TG-lang. Klar for videre stepping og breakpoint-stotte.
           </p>
         </div>
-        <span className={`debugger-badge debugger-badge--${state.status}`}>
-          {STATUS_LABELS[state.status]}
-        </span>
+        <div className="debugger-toolbar">
+          <span className={`debugger-badge debugger-badge--${state.status}`}>
+            {STATUS_LABELS[state.status]}
+          </span>
+          <button type="button" onClick={() => void stopActiveSession()} disabled={!canStop}>
+            Stopp session
+          </button>
+        </div>
       </div>
+
+      {activeSession ? (
+        <p className="panel-meta">
+          Aktiv stop-session: <strong>{activeSession.label}</strong>
+        </p>
+      ) : null}
 
       <div className="debugger-grid">
         <div className="debugger-stat">

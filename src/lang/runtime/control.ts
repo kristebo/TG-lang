@@ -14,7 +14,8 @@ export const setActiveRun = (run: ActiveRun | null): void => {
   activeRun = run
 }
 
-export const isRunActive = (run: ActiveRun): boolean => activeRun?.id === run.id && !run.aborted
+export const isRunActive = (run: ActiveRun): boolean =>
+  activeRun?.id === run.id && !run.aborted && !run.stopRequested
 
 export const createKeepAlive = (run: ActiveRun): Promise<void> => {
   if (!run.keepAlive) {
@@ -67,6 +68,7 @@ export function createRun(): ActiveRun {
   return {
     id: ++runCounter,
     aborted: false,
+    stopRequested: false,
     cleanups: [],
     keepAlive: null,
     failure: null,
@@ -74,13 +76,17 @@ export function createRun(): ActiveRun {
 }
 
 export function stopRun(run: ActiveRun): void {
+  run.stopRequested = true
   run.aborted = true
   releaseKeepAlive(run)
 }
 
 export function stopActiveRun(): { success: boolean; error?: string } {
-  if (!activeRun || activeRun.aborted) {
-    return { success: false, error: 'Ingen TG-kode kjører for øyeblikket.' }
+  if (!activeRun || activeRun.aborted || activeRun.stopRequested) {
+    return {
+      success: false,
+      error: 'Ingen TG-lang-program eller debug-session kjører for øyeblikket.',
+    }
   }
 
   stopRun(activeRun)

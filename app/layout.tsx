@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { TGStopProvider } from './providers/TGStopProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="no">
-      <body>{children}</body>
+      <body>
+        <TGStopProvider>{children}</TGStopProvider>
+      </body>
     </html>
   )
 }

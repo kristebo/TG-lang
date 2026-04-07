@@ -6,7 +6,7 @@ type EditorPanelProps = {
   onExampleChange: (id: string) => void
   onLoadExample: () => void
   onRun: () => void | Promise<void>
-  onStop: () => void
+  onStop: () => void | Promise<void>
   running: boolean
   source: string
   onSourceChange: (value: string) => void

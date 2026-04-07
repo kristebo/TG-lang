@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_CANVAS_RESOLUTION } from '../src/lang/constants'
-import { runTG, stopTG } from '../src/lang/runtime'
+import { runTG } from '../src/lang/runtime'
 import { EXAMPLES } from '../src/samples'
 import { AppFooter } from './components/AppFooter'
 import { AppHeader } from './components/AppHeader'
@@ -12,6 +12,7 @@ import { EditorPanel } from './components/EditorPanel'
 import { ProgramOutputPanel } from './components/ProgramOutputPanel'
 import { VikingskipCanvasPanel } from './components/VikingskipCanvasPanel'
 import { useTGDebugger } from './hooks/useTGDebugger'
+import { useTGProgramStop } from './hooks/useTGProgramStop'
 
 type Pixel = {
   x: number
@@ -35,6 +36,10 @@ export default function Home() {
     syncRunResult,
     captureRuntimeFailure,
   } = useTGDebugger()
+  const { canStop, stopActiveSession } = useTGProgramStop({
+    active: running || debuggerState.status === 'running',
+    debugging: debuggerState.status === 'running',
+  })
   const isVikingskipMode = /^\s*vikingskip\b/m.test(source)
   const visibleCanvasResolution = isVikingskipMode ? (canvasResolution ?? DEFAULT_CANVAS_RESOLUTION) : null
 
@@ -105,15 +110,16 @@ export default function Home() {
     }
   }
 
-  function stopCode(): void {
-    const stopped = stopTG()
+  async function stopCode(): Promise<void> {
+    const stopped = await stopActiveSession()
     if (!stopped.success && stopped.error) {
       setOutput(`Feil: ${stopped.error}`)
       return
     }
 
-    setOutput((current) => `${current}\n[stoppet]`)
-    setRunning(false)
+    setOutput((current) =>
+      current.includes('[stoppet]') ? current : `${current}\n[stoppet]`,
+    )
   }
 
   return (
@@ -129,7 +135,7 @@ export default function Home() {
             onLoadExample={loadExample}
             onRun={runCode}
             onStop={stopCode}
-            running={running}
+            running={running || canStop}
             source={source}
             onSourceChange={setSource}
           />
