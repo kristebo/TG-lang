@@ -2,12 +2,12 @@ export function DocumentationPanel() {
   return (
     <section className="panel spec">
       <div className="panel-heading">
-        <h2>TG-lang sprakdefinisjon</h2>
-        <p className="panel-meta">Sprakregler og runtime-referanse.</p>
+        <h2>TG-lang språkdefinisjon</h2>
+        <p className="panel-meta">Språkregler og runtime-referanse.</p>
       </div>
 
       <a href="https://github.com/kristebo/TG-lang" target="_blank" rel="noopener noreferrer">
-        Full TG-lang spesifikasjon pa GitHub
+        Full TG-lang spesifikasjon på GitHub
       </a>
 
       <h3>Programstruktur</h3>
@@ -16,7 +16,7 @@ export function DocumentationPanel() {
           Et program starter med <strong>innsjekk</strong> og avsluttes med <strong>søndag</strong>.
         </li>
         <li>
-          Valgfri grafikkmodus startes med <strong>vikingskip</strong> pa egen linje før <strong>innsjekk</strong>.
+          Valgfri grafikkmodus startes med <strong>vikingskip</strong> på egen linje før <strong>innsjekk</strong>.
         </li>
         <li>
           I grafikkmodus settes oppløsning med <strong>hovedscene arne ...</strong>. Hvis ikke oppgitt brukes standard
@@ -33,7 +33,7 @@ export function DocumentationPanel() {
           <strong>rop</strong> er et uttrykk som konverterer arne-baserte verdier til bokstaver.
         </li>
         <li>
-          <strong>pall</strong> gir en runtime-generert tallverdi der <strong>| 1</strong> brukes pa heltallsdelen, men
+          <strong>pall</strong> gir en runtime-generert tallverdi der <strong>| 1</strong> brukes på heltallsdelen, men
           desimaldelen beholdes.
         </li>
         <li>
@@ -62,25 +62,25 @@ export function DocumentationPanel() {
           <strong>rop</strong> støtter uttrykk og konkatenering med <strong>crew</strong>.
         </li>
         <li>
-          Talltegn er ikke tillatt i kildekoden. Numeriske verdier ma uttrykkes med arne-sekvenser.
+          Talltegn er ikke tillatt i kildekoden. Numeriske verdier må uttrykkes med arne-sekvenser.
         </li>
       </ul>
 
       <h3>Hendelser (kreativia)</h3>
       <ul>
         <li>
-          <strong>kreativia tast handler</strong> registrerer en tastatur-lytter for <strong>keypress</strong>.
+          <strong>kreativia tastatur handler</strong> registrerer en tastatur-lytter for <strong>keypress</strong>.
         </li>
         <li>
-          Tasten oppgis som et uttrykk, typisk <strong>rop arne ...</strong>, slik at bokstaver matches via{' '}
+           Tastetrykk oppgis som et uttrykk, typisk <strong>rop arne ...</strong>, slik at bokstaver matches via{' '}
           <strong>event.key</strong> og ikke <strong>keyCode</strong>.
         </li>
         <li>
           For enkle bokstaver normaliseres tasten til store bokstaver, slik at <strong>kreativia rop arne handler</strong>{' '}
-          matcher bade <strong>a</strong> og <strong>A</strong>.
+          matcher både <strong>a</strong> og <strong>A</strong>.
         </li>
         <li>Handleren kalles med den faktiske tasten som argument.</li>
-        <li>Alle lyttere ryddes automatisk opp nar programmet stopper.</li>
+        <li>Alle lyttere ryddes automatisk opp når programmet stopper.</li>
         <li>
           Programmer som bruker <strong>kreativia</strong> forblir aktive til du trykker <strong>Stopp</strong>.
         </li>
@@ -141,13 +141,13 @@ export function DocumentationPanel() {
         <li>
           <strong>tech expr</strong> returnerer verdi.
         </li>
-        <li>Funksjonskall awaites automatisk i generert kode, bade pa toppniva og nested.</li>
+        <li>Funksjonskall awaites automatisk i generert kode, både på toppnivå og nested.</li>
       </ul>
 
       <h3>Runtime-kommandoer</h3>
       <ul>
         <li>
-          <strong>sovetelt(expr) &#123; &#125;</strong> pauser kjoring i expr sekunder.
+          <strong>sovetelt(expr) &#123; &#125;</strong> pauser kjøring i expr sekunder.
         </li>
         <li>
           <strong>attentiongrab(expr)</strong> kaster en feil.
@@ -169,8 +169,8 @@ export function DocumentationPanel() {
 
       <h3>Avbrytelse</h3>
       <ul>
-        <li>Stopp-knappen avbryter bare den aktive TG-kjoringen.</li>
-        <li>Avbrytelse virker ogsa under venting i <strong>sovetelt</strong> og i rekursive kjoringer.</li>
+        <li>Stopp-knappen avbryter bare den aktive TG-kjøringen.</li>
+        <li>Avbrytelse virker også under venting i <strong>sovetelt</strong> og i rekursive kjøringer.</li>
       </ul>
     </section>
   )
